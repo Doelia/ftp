@@ -28,36 +28,21 @@ void ClientConnexion::listenMessages() {
 	cout << "Fin d'attente de message." << endl;
 }
 
-int ClientConnexion::sendPaquet(string paquet) {
-	cout << "Tentative d'envoi du paquet '" << paquet << "' au client" << endl;
-
-	char* buffer;
-	initBuffer(&buffer, MAX_SIZE_PAQUETS);
-	int sizePaquet = paquet.size();
-
-	if (sizePaquet >= MAX_SIZE_PAQUETS) {
-		cout << "Erreur. Paquet trop gros (" << sizePaquet << "/" << MAX_SIZE_PAQUETS << ")" << endl;
-		return false;
-	}
-
-	for (int i=0; i < sizePaquet; i++) {
-		buffer[i] = paquet.at(i);
-	}
-
+int ClientConnexion::sendPaquet(Packet* p) {
+	char* buffer = p->constructPacket();
+	//cout << "Paquet à envoyer construit : " << buffer << endl;
 	int sock_err = send(this->sock, buffer, MAX_SIZE_PAQUETS, 0);
 	return true;
 }
 
-void ClientConnexion::onPaquet(string paquet) {
+void ClientConnexion::onPaquet(char* paquet) {
 	cout << "Paquet reçu du client : '" << paquet << "'" << endl;
-	vector<string> parts = split(paquet, DELI());
-	if (parts.size() == 0) {
-		cout << "Erreur, paquet vide" << endl;
+	Packet* p = new Packet(paquet);
+	if (p->getId().compare("GET") == 0) {
+		this->onPaquet_get(p->getArgument());
 		return;
 	}
-	if (parts.at(0) == "GET") {
-		this->onPaquet_get(parts.at(1));
-	}
+	cout << "ERREUR. Packet non reconnu : " << paquet << ", ID detecté : " << p->getId() << endl;
 }
 
 void ClientConnexion::onPaquet_get(string nameFile) {
@@ -65,37 +50,35 @@ void ClientConnexion::onPaquet_get(string nameFile) {
 
 	if (FileManager::getInstance()->exists(nameFile)) {
 		cout << "Le fichier existe" << endl;
-		this->sendPaquet("REP_GET"+DELI()+"1");
+		this->sendPaquet(new Packet("RGE", "1", 0, NULL));
 
 		int size = FileManager::getInstance()->getSize(nameFile);
-		char sizeString[MAX_SIZE_PAQUETS];
-		sprintf(sizeString, "%d", size);
-		this->sendPaquet("FILE_HEAD"+DELI()+nameFile+DELI()+sizeString);
+		cout << "Taille du fichier = " << size << endl;
+		this->sendPaquet(new Packet("FID", nameFile, size, NULL));
 		this->startSendFile(nameFile);
 	} else {
 		cout << "Le fichier demandé n'existe pas" << endl;
-		this->sendPaquet("REP_GET"+DELI()+"0");
+		this->sendPaquet(new Packet("RGE", "0", 0, NULL));
 	}
 }
 
+
 void ClientConnexion::sendPartFile(string nameFile, char* part, int length) {
-	char lengthChar[21];
-	sprintf(lengthChar, "%d", length);
-	this->sendPaquet("FILE_DATA"+DELI()+nameFile+DELI()+lengthChar+DELI()+part);
+	this->sendPaquet(new Packet("FDA", nameFile, length, part));
 }
 
 void ClientConnexion::startSendFile(string nameFile) {
 	cout << "Envoi du fichier " << nameFile << " au client..." << endl;
 
 	int descriptFichier = open(nameFile.c_str(), O_RDONLY);
-	int size_read_eachTime = MAX_SIZE_PAQUETS - 9 - DELI().size()*3 - nameFile.size() - 20;
+	int size_read_eachTime = 20;
 	if (size_read_eachTime <= 0) {
 		cout << "ERREUR. size_read_eachTime est trop faible (" << size_read_eachTime << ")" << endl;
 		close(descriptFichier);
 		return;
 	}
 
-	cout << "readEchTime=" << descriptFichier << endl;
+	cout << size_read_eachTime << " caractères seront lu par paquets" << endl;
 
 	char* buffer;
 	initBuffer(&buffer, size_read_eachTime);

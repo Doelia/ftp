@@ -7,6 +7,10 @@ void initBuffer(char** buff, int size) {
 	}
 }
 
+void getNext(const char* s, string delim) {
+    
+}
+
 void split(const string &s, string delim, vector<string> &elems) {
     int x = s.find (delim, 0);
     if (x == -1) {
@@ -26,6 +30,6 @@ vector<string> split(const string &s, string delim) {
 }
 
 string DELI() {
-    return "X::X";
+    return "X\rcaX";
 }
 

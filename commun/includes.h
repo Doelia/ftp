@@ -28,6 +28,7 @@
 #include <sys/socket.h>
 
 #include "ThreadManager.h"
+#include "Packet.h"
 #include "tools.h"
 
 #endif

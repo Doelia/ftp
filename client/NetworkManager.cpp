@@ -60,22 +60,19 @@ void NetworkManager::listenMessages() {
     cout << "Fin d'attende de message." << endl;
 }
 
-void NetworkManager::onPaquet(string paquet) {
+void NetworkManager::onPaquet(char* paquet) {
+
+	Packet* p = new Packet(paquet);
+
 	//cout << "Paquet reçu du serveur : '" << paquet << "'" << endl;
-	vector<string> parts = split(paquet, DELI());
-	if (parts.size() == 0) {
-		cout << "Erreur, paquet vide" << endl;
+
+	if (p->getId().compare("MSG") == 0) {
+		this->onPaquet_message(p->getArgument());
 		return;
 	}
 
-	if (parts.at(0).compare("MSG") == 0) {
-		this->onPaquet_message(parts.at(1));
-		return;
-	}
-
-	if (parts.at(0).compare("REP_GET") == 0) {
-		string reponse = parts.at(1);
-		if (reponse.compare("1") == 0) {
+	if (p->getId().compare("RGE") == 0) { // Réponse du GET
+		if (p->getArgument().compare("1") == 0) {
 			cout << "Fichier trouvé. Le transfert va démarrer." << endl;
 		} else {
 			cout << "Fichier introuvable. Veuillez vérifier le nom entré puis réésayez." << endl;
@@ -84,21 +81,18 @@ void NetworkManager::onPaquet(string paquet) {
 		return;
 	}
 
-	if (parts.at(0).compare("FILE_HEAD") == 0) {
-		string nameFile = parts.at(1);
-		string sizeString = parts.at(2);
+	if (p->getId().compare("FID") == 0) { // File Head
+		string nameFile = p->getArgument();
+		int sizeString = p->getSizeData();
 		cout << "reçu header file" << nameFile << " " << sizeString << endl;
-		this->onPaquet_fileHeader("out_"+nameFile, atoi(sizeString.c_str()));
+		this->onPaquet_fileHeader("out_"+nameFile, sizeString);
 		return;
 	}
 
-	if (parts.at(0).compare("FILE_DATA") == 0) {
-		string nameFile = parts.at(1);
-		string length = parts.at(2);
-		int lengthInt =  atoi(length.c_str());
-		string data = parts.at(3);
-		const char* datas = data.substr(0, lengthInt).c_str();
-		this->onPaquet_fileData(nameFile, datas, atoi(length.c_str()));
+	if (p->getId().compare("FDA") == 0) { // Fide Data
+		string nameFile = p->getArgument();
+		int lengthInt = p->getSizeData();
+		this->onPaquet_fileData(nameFile, p->getDatas(), lengthInt);
 		return;
 	}
 
@@ -117,29 +111,18 @@ void NetworkManager::onPaquet_fileHeader(string nameFile, int sizeFile) {
 
 void NetworkManager::onPaquet_fileData(string nameFile, const char* data, int length) {
 	//cout << "paquet de longeur " << length << " reçu : " << data << endl;
+	//cout << "data write : " << data << endl;
 	write(fd, data, length);
 }
 
-bool NetworkManager::sendPaquet(string paquet) {
-	//cout << "Tentative d'envoi du paquet '" << paquet << "'" << endl;
-	char* buffer;
-	initBuffer(&buffer, MAX_SIZE_PAQUETS);
-	int sizePaquet = paquet.size();
-
-	if (sizePaquet >= MAX_SIZE_PAQUETS) {
-		cout << "Erreur. Paquet trop gros (" << sizePaquet << "/" << MAX_SIZE_PAQUETS << endl;
-		return false;
-	}
-
-	for (int i=0; i < sizePaquet; i++) {
-		buffer[i] = paquet.at(i);
-	}
-
+bool NetworkManager::sendPaquet(Packet* p) {
+	char* buffer = p->constructPacket();
+	cout << "Paquet à envoyer = " << buffer << endl;
 	int sock_err = send(this->sock, buffer, MAX_SIZE_PAQUETS, 0);
 	return true;
 }
 
 void NetworkManager::sendGetFile(string namefile) {
-	this->sendPaquet("GET"+DELI()+namefile);
+	this->sendPaquet(new Packet("GET", namefile, 0, NULL));
 }
 

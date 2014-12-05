@@ -21,11 +21,11 @@ private:
 	
 	int sock;
 
-	void onPaquet(string);
+	void onPaquet(char*);
 	void onPaquet_message(string);
 	void onPaquet_fileData(string, const char*, int);
 	void onPaquet_fileHeader(string, int);
-	bool sendPaquet(string);
+	bool sendPaquet(Packet*);
 
 };
 

@@ -12,7 +12,7 @@ private:
 	static string SEP;
 
 	int sock;
-	void onPaquet(string);
+	void onPaquet(char*);
 	void onPaquet_get(string);
 
 	// Tests
@@ -23,7 +23,7 @@ public:
 	ClientConnexion(int);
 	void listenMessages();
 	void start_listenMessages();
-	int sendPaquet(string);
+	int sendPaquet(Packet*);
 
 };
 
