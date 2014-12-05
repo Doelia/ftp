@@ -51,11 +51,11 @@ void NetworkManager::start_listenMessages() {
 
 void NetworkManager::listenMessages() {
 	char* buff;
-	initBuffer(&buff, 32);
+	initBuffer(&buff, MAX_SIZE_PAQUETS);
 	int retour;
 	while ((retour = recv(this->sock, buff, MAX_SIZE_PAQUETS, 0)) > 0) {
 		this->onPaquet(buff);
-		initBuffer(&buff, 32);
+		initBuffer(&buff, MAX_SIZE_PAQUETS);
 	}
     cout << "Fin d'attende de message." << endl;
 }
@@ -88,13 +88,15 @@ void NetworkManager::onPaquet(string paquet) {
 		string nameFile = parts.at(1);
 		string sizeString = parts.at(2);
 		cout << "reçu header file" << nameFile << " " << sizeString << endl;
+		this->onPaquet_fileHeader("out_"+nameFile, atoi(sizeString.c_str()));
 		return;
 	}
 
 	if (parts.at(0).compare("FILE_DATA") == 0) {
 		string nameFile = parts.at(1);
-		string data = parts.at(2);
-		this->onPaquet_fileData(nameFile, data);
+		string length = parts.at(2);
+		string data = parts.at(3);
+		this->onPaquet_fileData(nameFile, data, atoi(length.c_str()));
 		return;
 	}
 
@@ -105,8 +107,22 @@ void NetworkManager::onPaquet_message(string message) {
 	//cout << "Message reçu du serveur : " << message << endl;
 }
 
-void NetworkManager::onPaquet_fileData(string nameFile, string data) {
-	
+int fd;
+
+void NetworkManager::onPaquet_fileHeader(string nameFile, int sizeFile) {
+	fd = open(nameFile.c_str(), O_CREAT | O_WRONLY, 777);
+}
+
+void NetworkManager::onPaquet_fileData(string nameFile, string data, int length) {
+	cout << "paquet de longeur " << length << " reçu : " << data << endl;
+	if (length < 20) {
+		cout << "trop petit : " << data << endl;
+	}
+	for (int i = 0; i < length; i++) {
+		char c = data.at(i);
+		cout << "write " << c << endl;
+		write(fd, &c, 1);
+	}
 }
 
 bool NetworkManager::sendPaquet(string paquet) {

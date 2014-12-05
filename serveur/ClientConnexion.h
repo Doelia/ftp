@@ -11,6 +11,11 @@ private:
 	int sock;
 	void onPaquet(string);
 	void onPaquet_get(string);
+
+	// Tests
+	void sendPartFile(string, char*, int);
+	void startSendFile(string);
+
 public:
 	ClientConnexion(int);
 	void listenMessages();

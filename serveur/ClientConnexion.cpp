@@ -7,7 +7,7 @@ ClientConnexion::ClientConnexion(int socket) {
 void* client_listeMessages(void* c) {
 	ClientConnexion* cc = (ClientConnexion*) c;
 	cc->listenMessages();
-    return NULL;
+	return NULL;
 }
 
 void ClientConnexion::start_listenMessages() {
@@ -66,12 +66,41 @@ void ClientConnexion::onPaquet_get(string nameFile) {
 		this->sendPaquet("REP_GET:1");
 
 		int size = FileManager::getInstance()->getSize(nameFile);
-		char sizeString[32];
+		char sizeString[MAX_SIZE_PAQUETS];
 		sprintf(sizeString, "%d", size);
 		this->sendPaquet("FILE_HEAD:"+nameFile+":"+sizeString);
+		this->startSendFile(nameFile);
 	} else {
 		cout << "Le fichier demandé n'existe pas" << endl;
 		this->sendPaquet("REP_GET:0");
 	}
+}
+
+void ClientConnexion::sendPartFile(string nameFile, char* part, int length) {
+	char lengthChar[21];
+	sprintf(lengthChar, "%d", length);
+	this->sendPaquet("FILE_DATA:"+nameFile+":"+lengthChar+":"+part);
+}
+
+void ClientConnexion::startSendFile(string nameFile) {
+	cout << "Envoi du fichier " << nameFile << " au client..." << endl;
+
+	int descriptFichier = open(nameFile.c_str(), O_RDONLY);
+	int size_read_eachTime = 20;
+
+	char* buffer;
+	initBuffer(&buffer, size_read_eachTime);
+
+	cout << "Envoi du fichier en cours..." << endl;
+	int nbrRead = 0;
+	while (nbrRead = read(descriptFichier, buffer, size_read_eachTime)) {
+		this->sendPartFile(nameFile, buffer, nbrRead);
+		initBuffer(&buffer, size_read_eachTime);
+	}
+
+	close(descriptFichier);
+
+	cout << "Fin d'envoi du fichier" << endl;
+
 }
 
