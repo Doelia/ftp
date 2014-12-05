@@ -33,13 +33,14 @@ int ClientConnexion::sendPaquet(string paquet) {
 
 	char* buffer;
 	initBuffer(&buffer, MAX_SIZE_PAQUETS);
+	int sizePaquet = paquet.size();
 
-	if (paquet.size() >= MAX_SIZE_PAQUETS) {
-		cout << "Paquet trop gros" << endl;
+	if (sizePaquet >= MAX_SIZE_PAQUETS) {
+		cout << "Erreur. Paquet trop gros (" << sizePaquet << "/" << MAX_SIZE_PAQUETS << ")" << endl;
 		return false;
 	}
 
-	for (int i=0; i < paquet.size(); i++) {
+	for (int i=0; i < sizePaquet; i++) {
 		buffer[i] = paquet.at(i);
 	}
 
@@ -64,7 +65,7 @@ void ClientConnexion::onPaquet_get(string nameFile) {
 
 	if (FileManager::getInstance()->exists(nameFile)) {
 		cout << "Le fichier existe" << endl;
-		this->sendPaquet("REP_GET:1");
+		this->sendPaquet("REP_GET"+DELI()+"1");
 
 		int size = FileManager::getInstance()->getSize(nameFile);
 		char sizeString[MAX_SIZE_PAQUETS];
@@ -87,7 +88,14 @@ void ClientConnexion::startSendFile(string nameFile) {
 	cout << "Envoi du fichier " << nameFile << " au client..." << endl;
 
 	int descriptFichier = open(nameFile.c_str(), O_RDONLY);
-	int size_read_eachTime = 20;
+	int size_read_eachTime = MAX_SIZE_PAQUETS - 9 - DELI().size()*3 - nameFile.size() - 20;
+	if (size_read_eachTime <= 0) {
+		cout << "ERREUR. size_read_eachTime est trop faible (" << size_read_eachTime << ")" << endl;
+		close(descriptFichier);
+		return;
+	}
+
+	cout << "readEchTime=" << descriptFichier << endl;
 
 	char* buffer;
 	initBuffer(&buffer, size_read_eachTime);

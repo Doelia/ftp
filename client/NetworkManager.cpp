@@ -95,8 +95,10 @@ void NetworkManager::onPaquet(string paquet) {
 	if (parts.at(0).compare("FILE_DATA") == 0) {
 		string nameFile = parts.at(1);
 		string length = parts.at(2);
+		int lengthInt =  atoi(length.c_str());
 		string data = parts.at(3);
-		this->onPaquet_fileData(nameFile, data, atoi(length.c_str()));
+		const char* datas = data.substr(0, lengthInt).c_str();
+		this->onPaquet_fileData(nameFile, datas, atoi(length.c_str()));
 		return;
 	}
 
@@ -113,29 +115,23 @@ void NetworkManager::onPaquet_fileHeader(string nameFile, int sizeFile) {
 	fd = open(nameFile.c_str(), O_CREAT | O_WRONLY, 777);
 }
 
-void NetworkManager::onPaquet_fileData(string nameFile, string data, int length) {
-	cout << "paquet de longeur " << length << " reçu : " << data << endl;
-	if (length < 20) {
-		cout << "trop petit : " << data << endl;
-	}
-	for (int i = 0; i < length; i++) {
-		char c = data.at(i);
-		cout << "write " << c << endl;
-		write(fd, &c, 1);
-	}
+void NetworkManager::onPaquet_fileData(string nameFile, const char* data, int length) {
+	//cout << "paquet de longeur " << length << " reçu : " << data << endl;
+	write(fd, data, length);
 }
 
 bool NetworkManager::sendPaquet(string paquet) {
 	//cout << "Tentative d'envoi du paquet '" << paquet << "'" << endl;
 	char* buffer;
 	initBuffer(&buffer, MAX_SIZE_PAQUETS);
+	int sizePaquet = paquet.size();
 
-	if (paquet.size() >= MAX_SIZE_PAQUETS) {
-		cout << "Erreur. Paquet trop gros" << endl;
+	if (sizePaquet >= MAX_SIZE_PAQUETS) {
+		cout << "Erreur. Paquet trop gros (" << sizePaquet << "/" << MAX_SIZE_PAQUETS << endl;
 		return false;
 	}
 
-	for (int i=0; i < paquet.size(); i++) {
+	for (int i=0; i < sizePaquet; i++) {
 		buffer[i] = paquet.at(i);
 	}
 
