@@ -68,7 +68,7 @@ void ClientConnexion::onPaquet_get(string nameFile) {
 		int size = FileManager::getInstance()->getSize(nameFile);
 		char sizeString[MAX_SIZE_PAQUETS];
 		sprintf(sizeString, "%d", size);
-		this->sendPaquet("FILE_HEAD:"+nameFile+":"+sizeString);
+		this->sendPaquet("FILE_HEAD"+SEP+nameFile+SEP+sizeString);
 		this->startSendFile(nameFile);
 	} else {
 		cout << "Le fichier demandé n'existe pas" << endl;

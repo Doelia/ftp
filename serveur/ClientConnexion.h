@@ -8,6 +8,9 @@ void* client_listeMessages(void* c);
 class ClientConnexion {
 
 private:
+
+	static string SEP;
+
 	int sock;
 	void onPaquet(string);
 	void onPaquet_get(string);
