@@ -25,13 +25,10 @@ void ThreadManager::display(string s) {
 
 void ThreadManager::joinAll() {
 	int n = 0;
-
 	while (n != this->threads->size()) {
         this->display("Attente d'un thread...");
 		pthread_join(*this->threads->at(n), NULL);
 		n++;
 	}
-
-	
 }
 

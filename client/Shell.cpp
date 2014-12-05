@@ -72,7 +72,7 @@ void Shell::promptCommand() {
 
 void Shell::traiterCommand(string line) {
 
-	vector<string> parts = split(line, ' ');
+	vector<string> parts = split(line, " ");
 	if (parts.size() < 1) {
 		return;
 	}

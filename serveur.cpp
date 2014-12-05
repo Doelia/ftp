@@ -1,7 +1,7 @@
-#include "commun/header-commun.h"
 #include "serveur/header-serveur.h"
 
 int main() {
+
 
 	FileManager::init();
 	ThreadManager::init();

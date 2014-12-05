@@ -7,18 +7,25 @@ void initBuffer(char** buff, int size) {
 	}
 }
 
-vector<string> &split(const string &s, char delim, vector<string> &elems) {
-    stringstream ss(s);
-    string item;
-    while (getline(ss, item, delim)) {
-        elems.push_back(item);
+void split(const string &s, string delim, vector<string> &elems) {
+    int x = s.find (delim, 0);
+    if (x == -1) {
+        elems.push_back(s);
+    } else {
+        string elem = s.substr(0, x);
+        elems.push_back(elem);
+        string next = s.substr(x+delim.size(), s.size());
+        split(next, delim, elems);
     }
-    return elems;
 }
 
-
-vector<string> split(const string &s, char delim) {
+vector<string> split(const string &s, string delim) {
     vector<string> elems;
     split(s, delim, elems);
     return elems;
 }
+
+string DELI() {
+    return "X::X";
+}
+

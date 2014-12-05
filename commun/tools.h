@@ -2,9 +2,12 @@
 #define TOOLS_H
 
 #include "header-commun.h"
+
+
 using namespace std;
 
 void initBuffer(char** buff, int size);
-vector<string> split(const string &s, char delim);
+vector<string> split(const string &s, string delim);
+string DELI();
 
 #endif

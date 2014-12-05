@@ -62,7 +62,7 @@ void NetworkManager::listenMessages() {
 
 void NetworkManager::onPaquet(string paquet) {
 	//cout << "Paquet reçu du serveur : '" << paquet << "'" << endl;
-	vector<string> parts = split(paquet, ':');
+	vector<string> parts = split(paquet, DELI());
 	if (parts.size() == 0) {
 		cout << "Erreur, paquet vide" << endl;
 		return;
@@ -144,6 +144,6 @@ bool NetworkManager::sendPaquet(string paquet) {
 }
 
 void NetworkManager::sendGetFile(string namefile) {
-	this->sendPaquet("GET:"+namefile);
+	this->sendPaquet("GET"+DELI()+namefile);
 }
 

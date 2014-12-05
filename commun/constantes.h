@@ -5,7 +5,5 @@
 #define MAX_SIZE_PAQUETS 150
 #define SERVER_LIMIT_CLIENTS 5
 
-string SEP;
-
 #endif
 

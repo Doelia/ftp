@@ -1,4 +1,5 @@
 #include "ClientConnexion.h"
+#include "../commun/tools.h"
 
 ClientConnexion::ClientConnexion(int socket) {
 	this->sock = socket;
@@ -48,7 +49,7 @@ int ClientConnexion::sendPaquet(string paquet) {
 
 void ClientConnexion::onPaquet(string paquet) {
 	cout << "Paquet reçu du client : '" << paquet << "'" << endl;
-	vector<string> parts = split(paquet, ':');
+	vector<string> parts = split(paquet, DELI());
 	if (parts.size() == 0) {
 		cout << "Erreur, paquet vide" << endl;
 		return;
@@ -68,18 +69,18 @@ void ClientConnexion::onPaquet_get(string nameFile) {
 		int size = FileManager::getInstance()->getSize(nameFile);
 		char sizeString[MAX_SIZE_PAQUETS];
 		sprintf(sizeString, "%d", size);
-		this->sendPaquet("FILE_HEAD"+SEP+nameFile+SEP+sizeString);
+		this->sendPaquet("FILE_HEAD"+DELI()+nameFile+DELI()+sizeString);
 		this->startSendFile(nameFile);
 	} else {
 		cout << "Le fichier demandé n'existe pas" << endl;
-		this->sendPaquet("REP_GET:0");
+		this->sendPaquet("REP_GET"+DELI()+"0");
 	}
 }
 
 void ClientConnexion::sendPartFile(string nameFile, char* part, int length) {
 	char lengthChar[21];
 	sprintf(lengthChar, "%d", length);
-	this->sendPaquet("FILE_DATA:"+nameFile+":"+lengthChar+":"+part);
+	this->sendPaquet("FILE_DATA"+DELI()+nameFile+DELI()+lengthChar+DELI()+part);
 }
 
 void ClientConnexion::startSendFile(string nameFile) {
