@@ -13,7 +13,7 @@ FileManager* FileManager::init() {
 
 bool FileManager::exists(string nameFile) {
 	FILE *file;
-    if (file = fopen(nameFile.c_str(), "r")) {
+    if ((file = fopen(nameFile.c_str(), "r"))) {
         fclose(file);
         return 1;
     }
@@ -22,7 +22,7 @@ bool FileManager::exists(string nameFile) {
 
 int FileManager::getSize(string nameFile) {
 	FILE *file;
-    if (file = fopen(nameFile.c_str(), "r")) {
+    if ((file = fopen(nameFile.c_str(), "r"))) {
     	fseek(file, 0L, SEEK_END);
     	int size = ftell(file);
         fclose(file);

@@ -18,6 +18,7 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
+#include <unordered_map>
 
 #include <sys/stat.h>
 #include <sys/ipc.h>
@@ -27,8 +28,11 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "ThreadManager.h"
 #include "Packet.h"
+#include "ThreadManager.h"
+#include "ProgressNotifier.h"
+#include "FileReceiver.h"
 #include "tools.h"
 
 #endif
+

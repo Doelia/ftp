@@ -1,6 +1,8 @@
 #ifndef PACKET_H
 #define PACKET_H
 
+class Packet;
+
 #include "header-commun.h"
 
 using namespace std;

@@ -5,6 +5,8 @@ int main() {
 
     ThreadManager::init();
     Shell::init();
+    ProgressNotifier* pn = new ProgressNotifier();
+    FileReceiver::init(pn);
     NetworkManager* networkManager = NetworkManager::init();
 
 	cout << "Lancement du client..." << endl;

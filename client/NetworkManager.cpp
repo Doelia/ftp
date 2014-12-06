@@ -72,7 +72,7 @@ void NetworkManager::onPaquet(char* paquet) {
 
 	//cout << "Paquet reçu du serveur : ";
 	//p->display();
-	Packet::displayPacket(paquet, p->getSizePacket());
+	//Packet::displayPacket(paquet, p->getSizePacket());
 
 	if (p->getId().compare("MSG") == 0) {
 		this->onPaquet_message(p->getArgument());
@@ -98,9 +98,7 @@ void NetworkManager::onPaquet(char* paquet) {
 	}
 
 	if (p->getId().compare("FDA") == 0) { // Fide Data
-		string nameFile = p->getArgument();
-		int lengthInt = p->getSizeData();
-		this->onPaquet_fileData(nameFile, p->getDatas(), lengthInt);
+		this->onPaquet_fileData(p);
 		return;
 	}
 
@@ -109,29 +107,36 @@ void NetworkManager::onPaquet(char* paquet) {
 }
 
 void NetworkManager::onPaquet_message(string message) {
-	//cout << "Message reçu du serveur : " << message << endl;
+	// TODO
 }
 
-int fd;
 
 void NetworkManager::onPaquet_fileHeader(string nameFile, int sizeFile) {
-	fd = open(nameFile.c_str(), O_CREAT | O_WRONLY, 777);
+	if (FileReceiver::getInstance()->prepareTransfert(nameFile, sizeFile)) {
+		
+	} else {
+		cout << "Erreur sur FileReceiver::getInstance()->prepareTransfert()" << endl;
+	}
 }
 
-void NetworkManager::onPaquet_fileData(string nameFile, const char* data, int length) {
-	//cout << "paquet de longeur " << length << " reçu : " << data << endl;
-	//cout << "data write : " << data << endl;
-	write(fd, data, length);
+void NetworkManager::onPaquet_fileData(Packet* p) {
+	if (!FileReceiver::getInstance()->recvData(p)) {
+		cout << "Erreur sur FileReceiver::getInstance()->recvData()" << endl;
+	}
 }
 
 bool NetworkManager::sendPaquet(Packet* p) {
 	char* buffer = p->constructPacket();
-	cout << "Paquet à envoyer = " << buffer << endl;
+	//cout << "Paquet à envoyer = " << buffer << endl;
 	int sock_err = send(this->sock, buffer, MAX_SIZE_PAQUETS, 0);
 	return true;
 }
 
 void NetworkManager::sendGetFile(string namefile) {
-	this->sendPaquet(new Packet("GET", namefile, 0, NULL));
+	Packet* p = new Packet("GET", namefile, 0, NULL);
+	this->sendPaquet(p);
 }
+
+
+
 

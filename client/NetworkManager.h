@@ -23,7 +23,7 @@ private:
 
 	void onPaquet(char*);
 	void onPaquet_message(string);
-	void onPaquet_fileData(string, const char*, int);
+	void onPaquet_fileData(Packet* p);
 	void onPaquet_fileHeader(string, int);
 	bool sendPaquet(Packet*);
 

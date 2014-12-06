@@ -6,6 +6,7 @@ int main() {
 	FileManager::init();
 	ThreadManager::init();
 	ServerManager::init();
+	FileReceiver::init(NULL);
 
 	ServerManager* server = ServerManager::getInstance();
 	int error = 0;

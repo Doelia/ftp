@@ -29,9 +29,9 @@ void ClientConnexion::listenMessages() {
 }
 
 int ClientConnexion::sendPaquet(Packet* p) {
-	//p->display();
 	char* buffer = p->constructPacket();
-	Packet::displayPacket(buffer, p->getSizePacket());
+	//p->display();
+	//Packet::displayPacket(buffer, p->getSizePacket());
 	int sock_err = send(this->sock, buffer, MAX_SIZE_PAQUETS, 0);
 	return true;
 }
@@ -45,6 +45,7 @@ void ClientConnexion::onPaquet(char* paquet) {
 		this->onPaquet_get(p->getArgument());
 		return;
 	}
+
 	cout << "ERREUR. Packet non reconnu : " << paquet << endl;
 	p->display();
 }
@@ -72,7 +73,7 @@ int cpt =0;
 void ClientConnexion::sendPartFile(string nameFile, char* part, int length) {
 	cpt++;
 	Packet* p = new Packet("FDA", nameFile, length, part);
-	cout << "packet " << cpt << ". ";
+	//cout << "packet " << cpt << ". ";
 	//p->display();
 	if (p->getSizeData() == 0) {
 		cout << "Erreur, data vide" << endl;
@@ -98,7 +99,7 @@ void ClientConnexion::startSendFile(string nameFile) {
 
 	cout << "Envoi du fichier en cours..." << endl;
 	int nbrRead = 0;
-	while (nbrRead = read(descriptFichier, buffer, size_read_eachTime)) {
+	while ( (nbrRead = read(descriptFichier, buffer, size_read_eachTime))) {
 		this->sendPartFile(nameFile, buffer, nbrRead);
 		initBuffer(&buffer, size_read_eachTime);
 	}
