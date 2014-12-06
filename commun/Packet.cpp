@@ -22,8 +22,7 @@ Packet::Packet(string p_id, string p_param, int p_sizeData, char* p_data) {
 	this->sizeData = p_sizeData;
 
 	if (p_data == NULL) {
-		char s[] = "";
-		this->data = s;
+		initBuffer(&data, 1);
 	} else {
 		this->data = p_data;
 	}
@@ -33,7 +32,13 @@ Packet::Packet(string p_id, string p_param, int p_sizeData, char* p_data) {
 char* Packet::constructPacket() {
 
 	char* packet;
-	initBuffer(&packet, 3+20+8+this->sizeData);
+	int sizePacket = 3+20+8+this->sizeData+1;
+
+	if (sizePacket > MAX_SIZE_PAQUETS) {
+		cout << "ERREUR. Le packet formet est plus grand que celui autorisé." << endl;
+	}
+
+	initBuffer(&packet, sizePacket);
 
 	int iPacket = 0;
 
@@ -56,6 +61,8 @@ char* Packet::constructPacket() {
 		packet[iPacket++] = this->data[i];
 	}
 
+	packet[iPacket] = '\0';
+
 	//cout << "data construct = " << this->data << endl;
 
 	return packet;
@@ -67,9 +74,17 @@ Packet::Packet(char* packet) {
 	
 	int iPacket = 0;
 
+	if (packet[0] == '\0') {
+		cout << "ERREUR, packet vide" << endl;
+	}
+
 	initBuffer(&char_id, 4);
 	for (int i=0; i < 3; i++) {
-		this->char_id[i] = packet[iPacket++];
+		char c = packet[iPacket++];
+		if (c == '\0') {
+			cout << "ERREUR, caractère d'ID introuvable." << endl;
+		}
+		this->char_id[i] = c;
 	}
 
 	initBuffer(&char_param, 21);
@@ -84,7 +99,7 @@ Packet::Packet(char* packet) {
 	}
 	this->sizeData = atoi(sizeDataChars);
 
-	initBuffer(&data, this->sizeData+1);
+	initBuffer(&data, this->sizeData);
 	for (int i=0; i < this->sizeData; i++) {
 		this->data[i] = packet[iPacket++];
 	}
@@ -110,3 +125,32 @@ char* Packet::getDatas() {
 	return this->data;
 }
 
+int Packet::getSizePacket() {
+	return 3+20+8+this->sizeData+1;
+}
+
+void Packet::displayPacket(char* paquet, int size) {
+	for (int i = 0; i < size; ++i)
+	{
+		char c = paquet[i];
+		if (c == '\0')
+			c = '0';
+
+		if (c == '\n')
+			c = 'n';
+
+		cout << c;
+	}
+
+	cout << " | size=" << size << endl;
+}
+
+void Packet::display() {
+	cout << "{" << endl;
+	cout << "ID=" << this->getId() << endl;
+	cout << "arg=" << this->getArgument() << endl;
+	cout << "sizeData=" << this->getSizeData() << endl;
+	cout << "data:";
+	Packet::displayPacket(this->getDatas(), this->getSizeData());
+	cout << "}" << endl;
+}

@@ -29,7 +29,4 @@ vector<string> split(const string &s, string delim) {
     return elems;
 }
 
-string DELI() {
-    return "X\rcaX";
-}
 

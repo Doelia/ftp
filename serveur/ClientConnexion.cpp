@@ -29,20 +29,24 @@ void ClientConnexion::listenMessages() {
 }
 
 int ClientConnexion::sendPaquet(Packet* p) {
+	//p->display();
 	char* buffer = p->constructPacket();
-	//cout << "Paquet à envoyer construit : " << buffer << endl;
+	Packet::displayPacket(buffer, p->getSizePacket());
 	int sock_err = send(this->sock, buffer, MAX_SIZE_PAQUETS, 0);
 	return true;
 }
 
 void ClientConnexion::onPaquet(char* paquet) {
-	cout << "Paquet reçu du client : '" << paquet << "'" << endl;
+	//cout << "Paquet reçu du client : " << paquet << endl;
+	
 	Packet* p = new Packet(paquet);
+
 	if (p->getId().compare("GET") == 0) {
 		this->onPaquet_get(p->getArgument());
 		return;
 	}
-	cout << "ERREUR. Packet non reconnu : " << paquet << ", ID detecté : " << p->getId() << endl;
+	cout << "ERREUR. Packet non reconnu : " << paquet << endl;
+	p->display();
 }
 
 void ClientConnexion::onPaquet_get(string nameFile) {
@@ -63,15 +67,24 @@ void ClientConnexion::onPaquet_get(string nameFile) {
 }
 
 
+int cpt =0;
+
 void ClientConnexion::sendPartFile(string nameFile, char* part, int length) {
-	this->sendPaquet(new Packet("FDA", nameFile, length, part));
+	cpt++;
+	Packet* p = new Packet("FDA", nameFile, length, part);
+	cout << "packet " << cpt << ". ";
+	//p->display();
+	if (p->getSizeData() == 0) {
+		cout << "Erreur, data vide" << endl;
+	}
+	this->sendPaquet(p);
 }
 
 void ClientConnexion::startSendFile(string nameFile) {
 	cout << "Envoi du fichier " << nameFile << " au client..." << endl;
 
 	int descriptFichier = open(nameFile.c_str(), O_RDONLY);
-	int size_read_eachTime = 20;
+	int size_read_eachTime = 10;
 	if (size_read_eachTime <= 0) {
 		cout << "ERREUR. size_read_eachTime est trop faible (" << size_read_eachTime << ")" << endl;
 		close(descriptFichier);

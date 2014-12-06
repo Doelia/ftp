@@ -48,12 +48,18 @@ void NetworkManager::start_listenMessages() {
 	ThreadManager::getInstance()->add(id);
 }
 
+int cpt =0;
 
 void NetworkManager::listenMessages() {
 	char* buff;
 	initBuffer(&buff, MAX_SIZE_PAQUETS);
 	int retour;
 	while ((retour = recv(this->sock, buff, MAX_SIZE_PAQUETS, 0)) > 0) {
+		cpt++;
+		cout << "packet" << cpt << ". ";
+		if (buff[0] == '\0') {
+			cout << "error au paquet " << cpt << endl;
+		}
 		this->onPaquet(buff);
 		initBuffer(&buff, MAX_SIZE_PAQUETS);
 	}
@@ -64,7 +70,9 @@ void NetworkManager::onPaquet(char* paquet) {
 
 	Packet* p = new Packet(paquet);
 
-	//cout << "Paquet reçu du serveur : '" << paquet << "'" << endl;
+	//cout << "Paquet reçu du serveur : ";
+	//p->display();
+	Packet::displayPacket(paquet, p->getSizePacket());
 
 	if (p->getId().compare("MSG") == 0) {
 		this->onPaquet_message(p->getArgument());
@@ -97,6 +105,7 @@ void NetworkManager::onPaquet(char* paquet) {
 	}
 
 	cout << "Erreur réseau. Paquet non reconnu : " << paquet << endl;
+	p->display();
 }
 
 void NetworkManager::onPaquet_message(string message) {

@@ -14,7 +14,11 @@ class Packet {
 		Packet(char* packet);
 		char* constructPacket();
 		int getSizeData();
+		int getSizePacket();
 		char* getDatas();
+		void display();
+
+		static void displayPacket(char*, int);
 
 		
 	private:
