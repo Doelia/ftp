@@ -8,5 +8,6 @@ using namespace std;
 
 void initBuffer(char** buff, int size);
 vector<string> split(const string &s, string delim);
+string getProgressBar(int);
 
 #endif

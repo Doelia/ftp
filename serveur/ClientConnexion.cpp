@@ -102,6 +102,7 @@ void ClientConnexion::startSendFile(string nameFile) {
 	while ( (nbrRead = read(descriptFichier, buffer, size_read_eachTime))) {
 		this->sendPartFile(nameFile, buffer, nbrRead);
 		initBuffer(&buffer, size_read_eachTime);
+		usleep(100);
 	}
 
 	close(descriptFichier);

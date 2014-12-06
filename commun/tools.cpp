@@ -29,4 +29,32 @@ vector<string> split(const string &s, string delim) {
     return elems;
 }
 
+string getProgressBar(int pourcent) {
+    int nbrBars = 40;
+    string s = "[";
+    int nbrBarsActives = pourcent * nbrBars / 100;
 
+    for (int i = 0; i < nbrBarsActives; ++i)
+    {
+       s += "=";
+    }
+
+    s += ">";
+
+    for (int i = nbrBarsActives; i < nbrBars; ++i)
+    {
+       s += " ";
+    }
+
+    s += "] ";
+
+
+    char px[4];
+    sprintf(px, "%d", pourcent);
+    s += px;
+
+    s += "%%";
+
+    return s;
+    
+}
