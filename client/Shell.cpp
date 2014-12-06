@@ -88,6 +88,7 @@ void Shell::traiterCommand(string line) {
 		string nameFile = parts.at(1);
 		NetworkManager::getInstance()->sendGetFile(nameFile);
 		this->waitReponse();
+		sleep(1);
 		return;
 	}
 

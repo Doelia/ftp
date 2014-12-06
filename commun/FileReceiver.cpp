@@ -12,18 +12,30 @@ void FileReceiver::init(ProgressNotifier* p_n) {
 
 FileReceiver::FileReceiver(ProgressNotifier* p_pn) {
 	this->pn = p_pn;
+	this->descs = new vector <int>();
+	this->sizeFiles = new vector <double>();
+	this->transfered = new vector <double>();
+	this->listFiles = new vector <string>();
+	nextKey = 0;
 }
 
 int FileReceiver::prepareTransfert(string nameFile, int size) {
 	int fd = open(nameFile.c_str(), O_CREAT | O_WRONLY, 777);
-	if (fd) {
-		string idFile = nameFile;
-		this->descs[idFile] = fd;
-		this->sizeFiles[idFile] = (double) size;
-		this->transfered[idFile] = 0.0;
+	if (fd > 0) {
+
+		int idFile = this->nextKey++;
+
+		this->descs->push_back(fd);
+		this->sizeFiles->push_back((double) size);
+		this->transfered->push_back(0.0);
+		this->listFiles->push_back(nameFile);
+
 		if (this->pn != NULL) {
 			this->pn->onFileStart(nameFile);
 		}
+	} else {
+		perror("Erreur lors de la création du fichier voulu.");
+		exit(0);
 	}
 	return fd;
 }
@@ -32,16 +44,23 @@ int FileReceiver::recvData(Packet* p) {
 	string nameFile = p->getArgument();
 	int lengthInt = p->getSizeData();
 	char* datas = p->getDatas();
-	string idFile = nameFile;
+	int idFile = this->getKeyFromNameFile("out_"+nameFile);
 
-	int desc = descs[idFile];
-	int totalSize = sizeFiles[idFile];
+	if (idFile < 0) {
+		cout << "Erreur. Fichier introuvable dans la base." << endl;
+		exit(0);
+		return idFile;
+	}
+
+	int desc = this->descs->at(idFile);
+	int totalSize = sizeFiles->at(idFile);
 	
 	if ((write(desc, datas, lengthInt))) {
-		this->transfered[idFile] += (double) lengthInt;
+		this->transfered->at(idFile) += (double) lengthInt;
 
 		if (this->pn != NULL) {
-			int pourcent = this->transfered[idFile] / totalSize * 100;
+			int pourcent = this->transfered->at(idFile) / totalSize * 100;
+			cout << pourcent << "P" << endl;
 			this->pn->onFileProgress(nameFile, pourcent);
 		}
 
@@ -51,3 +70,15 @@ int FileReceiver::recvData(Packet* p) {
 	return 0;
 
 }
+
+
+int FileReceiver::getKeyFromNameFile(string nameFile) {
+	for (int i = 0; i < this->listFiles->size(); ++i) {
+		if (this->listFiles->at(i).compare(nameFile) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+

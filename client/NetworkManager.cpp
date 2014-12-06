@@ -56,7 +56,6 @@ void NetworkManager::listenMessages() {
 	int retour;
 	while ((retour = recv(this->sock, buff, MAX_SIZE_PAQUETS, 0)) > 0) {
 		cpt++;
-		cout << "packet" << cpt << ". ";
 		if (buff[0] == '\0') {
 			cout << "error au paquet " << cpt << endl;
 		}
@@ -92,7 +91,7 @@ void NetworkManager::onPaquet(char* paquet) {
 	if (p->getId().compare("FID") == 0) { // File Head
 		string nameFile = p->getArgument();
 		int sizeString = p->getSizeData();
-		cout << "reçu header file" << nameFile << " " << sizeString << endl;
+		cout << "reçu header file : " << nameFile << " " << sizeString << endl;
 		this->onPaquet_fileHeader("out_"+nameFile, sizeString);
 		return;
 	}
@@ -112,8 +111,8 @@ void NetworkManager::onPaquet_message(string message) {
 
 
 void NetworkManager::onPaquet_fileHeader(string nameFile, int sizeFile) {
-	if (FileReceiver::getInstance()->prepareTransfert(nameFile, sizeFile)) {
-		
+	if (FileReceiver::getInstance()->prepareTransfert(nameFile, sizeFile) > 0) {
+
 	} else {
 		cout << "Erreur sur FileReceiver::getInstance()->prepareTransfert()" << endl;
 	}

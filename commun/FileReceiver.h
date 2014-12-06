@@ -19,11 +19,15 @@ public:
 	
 private:
 	static FileReceiver* instance;
-	
-	unordered_map <string, int> descs; // Descripteurs des fichiers en cours de transferts
-	unordered_map <string, double> sizeFiles; // Descripteurs des fichiers en cours de transferts
-	unordered_map <string, double> transfered; // Descripteurs des fichiers en cours de transferts
+
+	vector<int>* descs; // Descripteurs des fichiers en cours de transferts
+	vector<double>* sizeFiles;
+	vector<string>* listFiles;
+	vector<double>* transfered;
 	ProgressNotifier* pn;
+
+	int getKeyFromNameFile(string);
+	int nextKey;
 
 };
 
