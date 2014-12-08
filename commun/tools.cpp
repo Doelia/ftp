@@ -51,7 +51,7 @@ char px[4];
 sprintf(px, "%d", pourcent);
 s += px;
 
-s += "%%";
+s += "%";
 
 return s;
 
