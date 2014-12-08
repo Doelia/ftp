@@ -61,6 +61,7 @@ void NetworkManager::listenMessages() {
 			cout << "Warning, un paquet reçu semble vide. Paquet #" << cpt << ", taille lue = " << retour << endl;
 		}
 		this->onPaquet(buff);
+		free(buff);
 		initBuffer(&buff, MAX_SIZE_PAQUETS);
 	}
     cout << "Fin d'attende de message." << endl;
@@ -131,6 +132,9 @@ bool NetworkManager::sendPaquet(Packet* p) {
 	char* buffer = p->constructPacket();
 	//cout << "Paquet à envoyer = " << buffer << endl;
 	int sock_err = send(this->sock, buffer, MAX_SIZE_PAQUETS, 0);
+	free(buffer);
+	p->deleteFromMemory();
+	free(p);
 	return true;
 }
 

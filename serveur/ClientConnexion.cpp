@@ -23,6 +23,7 @@ void ClientConnexion::listenMessages() {
 	int retour;
 	while ((retour = recv(this->sock, buff, MAX_SIZE_PAQUETS, 0)) > 0) {
 		this->onPaquet(buff);
+		free(buff);
 		initBuffer(&buff, MAX_SIZE_PAQUETS);
 	}
 	cout << "Fin d'attente de message." << endl;
@@ -33,9 +34,14 @@ int ClientConnexion::sendPaquet(Packet* p) {
 	if (buffer[0] == '\0') {
 		cout << "Warning : Un paquet semble vide" << endl;
 	}
+	
 	//p->display();
 	//Packet::displayPacket(buffer, p->getSizePacket());
-	int sock_err = send(this->sock, buffer, p->getSizePacket(), 0);
+	int sock_err = send(this->sock, buffer, p->getSizePacket()+5, 0);
+
+	free(buffer);
+	p->deleteFromMemory();
+	free(p);
 	//sleep(1);
 	return true;
 }
@@ -52,6 +58,9 @@ void ClientConnexion::onPaquet(char* paquet) {
 
 	cout << "ERREUR. Packet non reconnu : " << paquet << endl;
 	p->display();
+
+	p->deleteFromMemory();
+	free(p);
 }
 
 void ClientConnexion::onPaquet_get(string nameFile) {
@@ -106,6 +115,7 @@ void ClientConnexion::startSendFile(string nameFile) {
 	int nbrRead = 0;
 	while ( (nbrRead = read(descriptFichier, buffer, size_read_eachTime))) {
 		this->sendPartFile(nameFile, buffer, nbrRead);
+		free(buffer);
 		initBuffer(&buffer, size_read_eachTime);
 		usleep(100);
 	}

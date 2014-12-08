@@ -56,6 +56,7 @@ char* Packet::constructPacket() {
 	for (int i=0; i < 8; i++) {
 		packet[iPacket++] = constructSize[i];
 	}
+	free(constructSize);
 
 	if (this->haveData) {
 		for (int i=0; i < this->sizeData; i++) {
@@ -170,3 +171,10 @@ void Packet::display() {
 	Packet::displayPacket(this->getDatas(), this->getSizeData());
 	cout << "}" << endl;
 }
+
+void Packet::deleteFromMemory() {
+	free(this->char_id);
+	free(this->char_param);
+	free(this->data);
+}
+

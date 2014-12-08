@@ -18,6 +18,7 @@ class Packet {
 		int getSizePacket();
 		char* getDatas();
 		void display();
+		void deleteFromMemory();
 
 		static void displayPacket(char*, int);
 
