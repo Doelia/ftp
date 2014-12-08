@@ -56,8 +56,9 @@ void NetworkManager::listenMessages() {
 	int retour;
 	while ((retour = recv(this->sock, buff, MAX_SIZE_PAQUETS, 0)) > 0) {
 		cpt++;
+		//cout << retour << "bytes lus" << endl;
 		if (buff[0] == '\0') {
-			cout << "error au paquet " << cpt << endl;
+			cout << "Warning, un paquet reçu semble vide. Paquet #" << cpt << ", taille lue = " << retour << endl;
 		}
 		this->onPaquet(buff);
 		initBuffer(&buff, MAX_SIZE_PAQUETS);
@@ -119,6 +120,8 @@ void NetworkManager::onPaquet_fileHeader(string nameFile, int sizeFile) {
 }
 
 void NetworkManager::onPaquet_fileData(Packet* p) {
+	//cout << "packet " << cpt << ". ";
+	//p->display();
 	if (!FileReceiver::getInstance()->recvData(p)) {
 		cout << "Erreur sur FileReceiver::getInstance()->recvData()" << endl;
 	}

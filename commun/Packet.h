@@ -11,7 +11,6 @@ class Packet {
 	public:
 		string getId();
 		string getArgument();
-		Packet();
 		Packet(string p_id, string p_param, int p_sizeData, char* p_data);
 		Packet(char* packet);
 		char* constructPacket();
@@ -28,6 +27,7 @@ class Packet {
 		char* char_param; // taille de 20
 		int sizeData;
 		char* data;
+		bool haveData;
 };
 
 #endif

@@ -18,7 +18,6 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
-#include <unordered_map>
 
 #include <sys/stat.h>
 #include <sys/ipc.h>

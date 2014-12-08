@@ -30,9 +30,13 @@ void ClientConnexion::listenMessages() {
 
 int ClientConnexion::sendPaquet(Packet* p) {
 	char* buffer = p->constructPacket();
+	if (buffer[0] == '\0') {
+		cout << "Warning : Un paquet semble vide" << endl;
+	}
 	//p->display();
 	//Packet::displayPacket(buffer, p->getSizePacket());
-	int sock_err = send(this->sock, buffer, MAX_SIZE_PAQUETS, 0);
+	int sock_err = send(this->sock, buffer, p->getSizePacket(), 0);
+	//sleep(1);
 	return true;
 }
 
@@ -73,7 +77,7 @@ int cpt =0;
 void ClientConnexion::sendPartFile(string nameFile, char* part, int length) {
 	cpt++;
 	Packet* p = new Packet("FDA", nameFile, length, part);
-	//cout << "packet " << cpt << ". ";
+	//cout << "packet " << cpt+2 << ". ";
 	//p->display();
 	if (p->getSizeData() == 0) {
 		cout << "Erreur, data vide" << endl;
@@ -86,6 +90,7 @@ void ClientConnexion::startSendFile(string nameFile) {
 
 	int descriptFichier = open(nameFile.c_str(), O_RDONLY);
 	int size_read_eachTime = 10;
+
 	if (size_read_eachTime <= 0) {
 		cout << "ERREUR. size_read_eachTime est trop faible (" << size_read_eachTime << ")" << endl;
 		close(descriptFichier);

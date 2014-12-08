@@ -1,12 +1,8 @@
 #include "Packet.h"
 
-Packet::Packet() {
-
-	initBuffer(&char_id, 4);
-	initBuffer(&char_param, 20);
-}
-
 Packet::Packet(string p_id, string p_param, int p_sizeData, char* p_data) {
+
+	//cout << "Création d'un paquet, ID=" << p_id << ", param=" << p_param << ", sizeData=" << p_sizeData << ", p_data=" << p_data << endl;
 
 	initBuffer(&char_id, 4);
 	initBuffer(&char_param, 21);
@@ -22,8 +18,10 @@ Packet::Packet(string p_id, string p_param, int p_sizeData, char* p_data) {
 	this->sizeData = p_sizeData;
 
 	if (p_data == NULL) {
+		this->haveData = false;
 		initBuffer(&data, 1);
 	} else {
+		this->haveData = true;
 		this->data = p_data;
 	}
 
@@ -32,7 +30,9 @@ Packet::Packet(string p_id, string p_param, int p_sizeData, char* p_data) {
 char* Packet::constructPacket() {
 
 	char* packet;
-	int sizePacket = 3+20+8+this->sizeData+1;
+	int sizePacket = this->getSizePacket();
+
+	//cout << "LOG. Taille du paquet = " << sizePacket << endl;
 
 	if (sizePacket > MAX_SIZE_PAQUETS) {
 		cout << "ERREUR. Le packet formet est plus grand que celui autorisé." << endl;
@@ -57,11 +57,13 @@ char* Packet::constructPacket() {
 		packet[iPacket++] = constructSize[i];
 	}
 
-	for (int i=0; i < this->sizeData; i++) {
-		packet[iPacket++] = this->data[i];
+	if (this->haveData) {
+		for (int i=0; i < this->sizeData; i++) {
+			packet[iPacket++] = this->data[i];
+		}
 	}
 
-	packet[iPacket] = '\0';
+	packet[iPacket++] = '\0';
 
 	//cout << "data construct = " << this->data << endl;
 
@@ -73,16 +75,17 @@ char* Packet::constructPacket() {
 Packet::Packet(char* packet) {
 	
 	int iPacket = 0;
+	this->haveData = true;
 
 	if (packet[0] == '\0') {
-		cout << "ERREUR, packet vide" << endl;
+		cout << "Warning, packet vide" << endl;
 	}
 
 	initBuffer(&char_id, 4);
 	for (int i=0; i < 3; i++) {
 		char c = packet[iPacket++];
 		if (c == '\0') {
-			cout << "ERREUR, caractère d'ID introuvable." << endl;
+			cout << "Warning, caractère d'ID introuvable." << endl;
 		}
 		this->char_id[i] = c;
 	}
@@ -126,7 +129,20 @@ char* Packet::getDatas() {
 }
 
 int Packet::getSizePacket() {
-	return 3+20+8+this->sizeData+1;
+
+	int sizePacket = 0;
+
+	sizePacket += 3; // Taille de l'ID
+	sizePacket += 20; // Taille du parametre
+	sizePacket += 8; // Taille de l'entier
+
+	if (this->haveData) {
+		sizePacket += this->sizeData;
+	}
+
+	sizePacket += 1;
+
+	return sizePacket;
 }
 
 void Packet::displayPacket(char* paquet, int size) {
