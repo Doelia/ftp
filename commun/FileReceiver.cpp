@@ -60,7 +60,7 @@ int FileReceiver::recvData(Packet* p) {
 
 		if (this->pn != NULL) {
 			int pourcent = this->transfered->at(idFile) / totalSize * 100;
-			//cout << endl << getProgressBar(pourcent) << std::flush;
+			cout << endl << getProgressBar(pourcent) << std::flush;
 			this->pn->onFileProgress(nameFile, pourcent);
 		}
 

@@ -21,7 +21,7 @@ private:
 	
 	int sock;
 
-	void onPaquet(char*);
+	void onPaquet(char*, int);
 	void onPaquet_message(string);
 	void onPaquet_fileData(Packet* p);
 	void onPaquet_fileHeader(string, int);

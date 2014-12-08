@@ -60,16 +60,16 @@ void NetworkManager::listenMessages() {
 		if (buff[0] == '\0') {
 			cout << "Warning, un paquet reçu semble vide. Paquet #" << cpt << ", taille lue = " << retour << endl;
 		}
-		this->onPaquet(buff);
+		this->onPaquet(buff, retour);
 		free(buff);
 		initBuffer(&buff, MAX_SIZE_PAQUETS);
 	}
     cout << "Fin d'attende de message." << endl;
 }
 
-void NetworkManager::onPaquet(char* paquet) {
+void NetworkManager::onPaquet(char* paquet, int size) {
 
-	Packet* p = new Packet(paquet);
+	Packet* p = new Packet(paquet, size);
 
 	//cout << "Paquet reçu du serveur : ";
 	//p->display();

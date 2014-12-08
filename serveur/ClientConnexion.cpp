@@ -22,7 +22,7 @@ void ClientConnexion::listenMessages() {
 	initBuffer(&buff, MAX_SIZE_PAQUETS);
 	int retour;
 	while ((retour = recv(this->sock, buff, MAX_SIZE_PAQUETS, 0)) > 0) {
-		this->onPaquet(buff);
+		this->onPaquet(buff, retour);
 		free(buff);
 		initBuffer(&buff, MAX_SIZE_PAQUETS);
 	}
@@ -34,22 +34,18 @@ int ClientConnexion::sendPaquet(Packet* p) {
 	if (buffer[0] == '\0') {
 		cout << "Warning : Un paquet semble vide" << endl;
 	}
-	
-	//p->display();
-	//Packet::displayPacket(buffer, p->getSizePacket());
-	int sock_err = send(this->sock, buffer, p->getSizePacket()+5, 0);
+
+	int bytesSend = send(this->sock, buffer, MAX_SIZE_PAQUETS, 0);
 
 	free(buffer);
 	p->deleteFromMemory();
 	free(p);
-	//sleep(1);
 	return true;
 }
 
-void ClientConnexion::onPaquet(char* paquet) {
-	//cout << "Paquet reçu du client : " << paquet << endl;
+void ClientConnexion::onPaquet(char* paquet, int size) {
 	
-	Packet* p = new Packet(paquet);
+	Packet* p = new Packet(paquet, size);
 
 	if (p->getId().compare("GET") == 0) {
 		this->onPaquet_get(p->getArgument());
@@ -81,13 +77,9 @@ void ClientConnexion::onPaquet_get(string nameFile) {
 }
 
 
-int cpt =0;
 
 void ClientConnexion::sendPartFile(string nameFile, char* part, int length) {
-	cpt++;
 	Packet* p = new Packet("FDA", nameFile, length, part);
-	//cout << "packet " << cpt+2 << ". ";
-	//p->display();
 	if (p->getSizeData() == 0) {
 		cout << "Erreur, data vide" << endl;
 	}
@@ -98,7 +90,7 @@ void ClientConnexion::startSendFile(string nameFile) {
 	cout << "Envoi du fichier " << nameFile << " au client..." << endl;
 
 	int descriptFichier = open(nameFile.c_str(), O_RDONLY);
-	int size_read_eachTime = 10;
+	int size_read_eachTime = MAX_SIZE_PAQUETS - Packet::getSizeHeaders() - 100;
 
 	if (size_read_eachTime <= 0) {
 		cout << "ERREUR. size_read_eachTime est trop faible (" << size_read_eachTime << ")" << endl;

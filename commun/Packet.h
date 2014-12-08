@@ -12,7 +12,7 @@ class Packet {
 		string getId();
 		string getArgument();
 		Packet(string p_id, string p_param, int p_sizeData, char* p_data);
-		Packet(char* packet);
+		Packet(char* packet, int size);
 		char* constructPacket();
 		int getSizeData();
 		int getSizePacket();
@@ -21,6 +21,7 @@ class Packet {
 		void deleteFromMemory();
 
 		static void displayPacket(char*, int);
+		static int getSizeHeaders();
 
 		
 	private:
@@ -29,6 +30,8 @@ class Packet {
 		int sizeData;
 		char* data;
 		bool haveData;
+
+		bool isIdPacketWithoutData();
 };
 
 #endif

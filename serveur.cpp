@@ -2,7 +2,6 @@
 
 int main() {
 
-
 	FileManager::init();
 	ThreadManager::init();
 	ServerManager::init();

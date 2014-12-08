@@ -12,7 +12,7 @@ private:
 	static string SEP;
 
 	int sock;
-	void onPaquet(char*);
+	void onPaquet(char*, int);
 	void onPaquet_get(string);
 
 	// Tests

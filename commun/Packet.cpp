@@ -2,8 +2,6 @@
 
 Packet::Packet(string p_id, string p_param, int p_sizeData, char* p_data) {
 
-	//cout << "Création d'un paquet, ID=" << p_id << ", param=" << p_param << ", sizeData=" << p_sizeData << ", p_data=" << p_data << endl;
-
 	initBuffer(&char_id, 4);
 	initBuffer(&char_param, 21);
 
@@ -27,6 +25,8 @@ Packet::Packet(string p_id, string p_param, int p_sizeData, char* p_data) {
 
 }
 
+int cptPac = 0;
+
 char* Packet::constructPacket() {
 
 	char* packet;
@@ -35,10 +35,10 @@ char* Packet::constructPacket() {
 	//cout << "LOG. Taille du paquet = " << sizePacket << endl;
 
 	if (sizePacket > MAX_SIZE_PAQUETS) {
-		cout << "ERREUR. Le packet formet est plus grand que celui autorisé." << endl;
+		cout << "ERREUR. Le packet calculé est plus grand que celui autorisé." << endl;
 	}
 
-	initBuffer(&packet, sizePacket);
+	initBuffer(&packet, MAX_SIZE_PAQUETS);
 
 	int iPacket = 0;
 
@@ -59,24 +59,24 @@ char* Packet::constructPacket() {
 	free(constructSize);
 
 	if (this->haveData) {
+		int sumData = 0;
 		for (int i=0; i < this->sizeData; i++) {
 			packet[iPacket++] = this->data[i];
+			sumData += this->data[i];
 		}
+		//cout << "Packet #" << cptPac++ << ". SumData = " << sumData << endl;
 	}
 
 	packet[iPacket++] = '\0';
-
-	//cout << "data construct = " << this->data << endl;
 
 	return packet;
 
 }
 
 
-Packet::Packet(char* packet) {
-	
+Packet::Packet(char* packet, int sizeOfPacket) {
+
 	int iPacket = 0;
-	this->haveData = true;
 
 	if (packet[0] == '\0') {
 		cout << "Warning, packet vide" << endl;
@@ -102,13 +102,22 @@ Packet::Packet(char* packet) {
 		sizeDataChars[i] = packet[iPacket++];
 	}
 	this->sizeData = atoi(sizeDataChars);
+	free(sizeDataChars);
 
-	initBuffer(&data, this->sizeData);
-	for (int i=0; i < this->sizeData; i++) {
-		this->data[i] = packet[iPacket++];
+	if (this->sizeData > 0 && !this->isIdPacketWithoutData()) {
+		this->haveData = true;
+		initBuffer(&data, this->sizeData);
+		int sumData = 0;
+		for (int i=0; i < this->sizeData; i++) {
+			this->data[i] = packet[iPacket++];
+			sumData += this->data[i];
+		}
+		//cout << "Packet #" << cptPac++ << ". SumData = " << sumData << endl;
+
+	} else {
+		this->haveData = false;
+		initBuffer(&data, 1);
 	}
-
-	//cout << "data out = " << this->data << ", size = " << this->sizeData << endl;
 
 }
 
@@ -129,19 +138,25 @@ char* Packet::getDatas() {
 	return this->data;
 }
 
-int Packet::getSizePacket() {
-
+int Packet::getSizeHeaders() {
 	int sizePacket = 0;
 
 	sizePacket += 3; // Taille de l'ID
 	sizePacket += 20; // Taille du parametre
 	sizePacket += 8; // Taille de l'entier
 
+	sizePacket += 1;
+
+	return sizePacket;
+}
+
+int Packet::getSizePacket() {
+
+	int sizePacket = Packet::getSizeHeaders();
+
 	if (this->haveData) {
 		sizePacket += this->sizeData;
 	}
-
-	sizePacket += 1;
 
 	return sizePacket;
 }
@@ -175,6 +190,9 @@ void Packet::display() {
 void Packet::deleteFromMemory() {
 	free(this->char_id);
 	free(this->char_param);
-	free(this->data);
+}
+
+bool Packet::isIdPacketWithoutData() {
+	return (this->getId().compare("FID") == 0);
 }
 
