@@ -13,7 +13,6 @@ public:
 	ProgressNotifier();
 	void onFileStart(string);
 	void onFileProgress(string nameFile, int pourcent);
-	
 private:
 
 };

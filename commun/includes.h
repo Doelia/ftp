@@ -30,8 +30,10 @@
 #include "Packet.h"
 #include "ThreadManager.h"
 #include "ProgressNotifier.h"
+#include "Connexion.h"
 #include "FileReceiver.h"
 #include "tools.h"
+#include "FileManager.h"
 
 #endif
 

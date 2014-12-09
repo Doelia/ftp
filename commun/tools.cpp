@@ -1,14 +1,15 @@
 #include "tools.h"
 
-void initBuffer(char** buff, int size) {
-	*buff = (char*) malloc(sizeof(char) * size + 1);
+void initBuffer(char** buff, int size, bool aloc) {
+	if (true) // TODO
+		*buff = (char*) malloc(sizeof(char) * size + 1);
 	for (int i =0; i < size+1; i++) {
 		buff[0][i] = '\0';
 	}
 }
 
-void getNext(const char* s, string delim) {
-	
+void initBuffer(char** buff, int size) {
+	initBuffer(buff, size, true);
 }
 
 void split(const string &s, string delim, vector<string> &elems) {
@@ -30,29 +31,25 @@ vector<string> split(const string &s, string delim) {
 }
 
 string getProgressBar(int pourcent) {
+
 	int nbrBars = 40;
 	string s = "[";
-		int nbrBarsActives = pourcent * nbrBars / 100;
+	int nbrBarsActives = pourcent * nbrBars / 100;
 
-		for (int i = 0; i < nbrBarsActives; ++i) {
-		 s += "=";
-	 }
+	for (int i = 0; i < nbrBarsActives; ++i) {
+		s += "=";
+	}
+	s += ">";
 
-	 s += ">";
+	for (int i = nbrBarsActives; i < nbrBars; ++i) {
+		s += " ";
+	}
+	s += "] ";
 
-	 for (int i = nbrBarsActives; i < nbrBars; ++i) {
-		 s += " ";
-	 }
+	char px[4];
+	sprintf(px, "%d", pourcent);
+	s += px;
+	s += "%";
 
-	 s += "] ";
-
-
-char px[4];
-sprintf(px, "%d", pourcent);
-s += px;
-
-s += "%";
-
-return s;
-
+	return s;
 }

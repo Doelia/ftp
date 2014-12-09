@@ -3,27 +3,16 @@
 
 #include "header-serveur.h"
 
-void* client_listeMessages(void* c);
-
-class ClientConnexion {
+class ClientConnexion : public Connexion {
 
 private:
 
-	static string SEP;
-
-	int sock;
 	void onPaquet(char*, int);
 	void onPaquet_get(string);
 
-	// Tests
-	void sendPartFile(string, char*, int);
-	void startSendFile(string);
 
 public:
 	ClientConnexion(int);
-	void listenMessages();
-	void start_listenMessages();
-	int sendPaquet(Packet*);
 
 };
 

@@ -20,7 +20,7 @@ FileReceiver::FileReceiver(ProgressNotifier* p_pn) {
 }
 
 int FileReceiver::prepareTransfert(string nameFile, int size) {
-	int fd = open(nameFile.c_str(), O_CREAT | O_WRONLY, 777);
+	int fd = FileManager::getInstance()->createFile(nameFile);
 	if (fd > 0) {
 
 		int idFile = this->nextKey++;
