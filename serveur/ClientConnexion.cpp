@@ -22,16 +22,17 @@ void ClientConnexion::onPaquet(char* paquet, int size) {
 }
 
 void ClientConnexion::onPaquet_get(string nameFile) {
+	FileManager* fm = FileManager::getInstance();
 	cout << "Le client veut le fichier " << nameFile << endl;
 
-	if (FileManager::getInstance()->exists(nameFile)) {
+	if (fm->exists(nameFile)) {
 		cout << "Le fichier existe" << endl;
 		this->sendPaquet(new Packet("RGE", "1", 0, NULL));
 
-		int size = FileManager::getInstance()->getSize(nameFile);
+		int size = fm->getSize(nameFile);
 		cout << "Taille du fichier = " << size << endl;
 		this->sendPaquet(new Packet("FID", nameFile, size, NULL));
-		FileManager::getInstance()->startSendFile(nameFile, this);
+		fm->startSendFile(nameFile, this);
 	} else {
 		cout << "Le fichier demandé n'existe pas" << endl;
 		this->sendPaquet(new Packet("RGE", "0", 0, NULL));

@@ -44,45 +44,35 @@ void NetworkManager::onPaquet(char* paquet, int size) {
 
 	if (p->getId().compare("MSG") == 0) {
 		this->onPaquet_message(p->getArgument());
-		p->deleteFromMemory();
-		free(p);
-		return;
 	}
 
-	if (p->getId().compare("RGE") == 0) { // Réponse du GET
+	else if (p->getId().compare("RGE") == 0) { // Réponse du GET
 		if (p->getArgument().compare("1") == 0) {
 			cout << "Fichier trouvé. Le transfert va démarrer." << endl;
 		} else {
 			cout << "Fichier introuvable. Veuillez vérifier le nom entré puis réésayez." << endl;
 		}
 		Shell::getInstance()->unlockShell();
-		p->deleteFromMemory();
-		free(p);
-		return;
 	}
 
-	if (p->getId().compare("FID") == 0) { // File Head
+	else if (p->getId().compare("FID") == 0) { // File Head
 		string nameFile = p->getArgument();
 		int sizeString = p->getSizeData();
 		cout << "reçu header file : " << nameFile << " " << sizeString << endl;
 		this->onPaquet_fileHeader("out_"+nameFile, sizeString);
-		p->deleteFromMemory();
-		free(p);
-		return;
 	}
 
-	if (p->getId().compare("FDA") == 0) { // Fide Data
+	else if (p->getId().compare("FDA") == 0) { // Fide Data
 		this->onPaquet_fileData(p);
-		p->deleteFromMemory();
-		free(p);
-		return;
 	}
-
-	cout << "Erreur réseau. Paquet non reconnu : " << paquet << endl;
-	p->display();
+	
+	else {
+		cout << "Erreur réseau. Paquet non reconnu : " << paquet << endl;
+		p->display();
+	}
+	
 	p->deleteFromMemory();
 	free(p);
-	return;
 }
 
 void NetworkManager::onPaquet_message(string message) {
