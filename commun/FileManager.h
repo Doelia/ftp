@@ -15,10 +15,11 @@ public:
 	int getSize(string);
 	int createFile(string);
 	void startSendFile(string, Connexion*);
+	void startSendFile_threaded(string, Connexion*);
 
 private:
 	static FileManager* instance;
-	void sendPartFile(string, char*, int, Connexion*);
+	bool sendPartFile(string, char*, int, Connexion*);
 
 };
 

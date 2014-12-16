@@ -1,5 +1,10 @@
 #include "serveur/header-serveur.h"
 
+void stop() {
+	cout << "Fermerture forcée." << endl;
+	exit(0);
+}
+
 int main() {
 
 	FileManager::init();
@@ -13,6 +18,8 @@ int main() {
 		server->acceptClients();
 	}
 
+
+	cout << "Fermerture du serveur..." << endl;
 	ThreadManager::getInstance()->joinAll();
 }
 

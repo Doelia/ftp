@@ -35,7 +35,7 @@ int FileReceiver::prepareTransfert(string nameFile, int size) {
 		}
 	} else {
 		perror("Erreur lors de la création du fichier voulu.");
-		exit(0);
+		stop();
 	}
 	return fd;
 }
@@ -48,7 +48,7 @@ int FileReceiver::recvData(Packet* p) {
 
 	if (idFile < 0) {
 		cout << "Erreur. Fichier introuvable dans la base." << endl;
-		exit(0);
+		stop();
 		return idFile;
 	}
 

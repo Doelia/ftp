@@ -21,13 +21,13 @@ Shell::Shell() {
 	key_t key = ftok("./sem", 10);
 	if (key == -1) {
 		perror("Problème lors de la réservation de la clé");
-		exit(0);
+		stop();
 	}
 
 	this->semid = semget(key, 2, IPC_CREAT | 0666);
 	if (semid == -1) {
 		perror("Problème lors du semget()");
-		exit(0);
+		stop();
 	}
 
 	semctl(semid, 0, SETVAL, 0);
@@ -73,7 +73,7 @@ void Shell::promptCommand() {
 		getline(cin, buff);
 	}
 
-	exit(0);
+	stop();
 }
 
 void Shell::traiterCommand(string line) {
@@ -97,6 +97,8 @@ void Shell::traiterCommand(string line) {
 		sleep(1);
 		return;
 	}
+
+	sleep(1);
 
 	cout << "Commande introuvable." << endl;
 }

@@ -33,28 +33,57 @@ int FileManager::getSize(string nameFile) {
 }
 
 int FileManager::createFile(string nameFile) {
-	int fd = open(nameFile.c_str(), O_CREAT | O_WRONLY, 777);
+	int fd = open(nameFile.c_str(), O_CREAT | O_WRONLY);
 	if (fd < 0) {
-		cout << "Erreur lors de la création du fichier " << nameFile << endl;
-		exit(0);
+		perror("Erreur lors de la création du fichier ");
+		stop();
 	}
 	return fd;
 }
 
 
-void FileManager::sendPartFile(string nameFile, char* part, int length, Connexion* connexion) {
+bool FileManager::sendPartFile(string nameFile, char* part, int length, Connexion* connexion) {
 	Packet* p = new Packet("FDA", nameFile, length, part);
 	if (p->getSizeData() == 0) {
 		cout << "Erreur, data vide" << endl;
 	}
 	usleep(100*1000);
-	connexion->sendPaquet(p);
+	bool err = connexion->sendPaquet(p);
 	p->deleteFromMemory();
 	free(p);
+	return err;
+}
+
+void* startSendFile_thread(void* pa) {
+	struct t {
+		string n;
+		Connexion* c;
+		FileManager* f;
+	};
+
+	t* v = (t*) pa;
+	v->f->startSendFile_threaded(v->n, v->c);
 }
 
 
-void FileManager::startSendFile(string nameFile, Connexion* connexion) {
+void FileManager::startSendFile(string nameFile, Connexion* connexion) { 
+	struct t {
+		string n;
+		Connexion* c;
+		FileManager* f;
+	};
+
+	t* x = new t();
+	x->n = nameFile;
+	x->c = connexion;
+	x->f = this;
+
+	pthread_t* id = (pthread_t*) malloc(sizeof(int)*2);
+	pthread_create(id, NULL, startSendFile_thread, (void*) x);
+	ThreadManager::getInstance()->add(id);
+}
+
+void FileManager::startSendFile_threaded(string nameFile, Connexion* connexion) {
 	cout << "Envoi du fichier " << nameFile << " au client..." << endl;
 
 	int descriptFichier = open(nameFile.c_str(), O_RDONLY);
@@ -73,8 +102,12 @@ void FileManager::startSendFile(string nameFile, Connexion* connexion) {
 
 	cout << "Envoi du fichier en cours..." << endl;
 	int nbrRead = 0;
-	while ((nbrRead = read(descriptFichier, buffer, size_read_eachTime))) {
-		this->sendPartFile(nameFile, buffer, nbrRead, connexion);
+	bool stop = false;
+	while (!stop && (nbrRead = read(descriptFichier, buffer, size_read_eachTime))) {
+		if (!this->sendPartFile(nameFile, buffer, nbrRead, connexion)) {
+			cout << "Erreur lors du transfert." << endl;
+			stop = true;
+		}
 		initBuffer(&buffer, size_read_eachTime, false);
 	}
 

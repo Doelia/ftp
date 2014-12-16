@@ -22,13 +22,13 @@ View::View() {
 	key_t key = ftok("./sem_disp", 10);
 	if (key == -1) {
 		perror("Problème lors de la réservation de la clé");
-		exit(0);
+		stop();
 	}
 
 	this->semid = semget(key, 2, IPC_CREAT | 0666);
 	if (semid == -1) {
 		perror("Problème lors du semget()");
-		exit(0);
+		stop();
 	}
 
 	semctl(semid, 0, SETVAL, 0);
@@ -48,12 +48,19 @@ void View::refreshView() {
     semop(semid, &op, 1);
 }
 
-void View::openView() {
-	if (fork()) {
-		system( "xterm ./a.out");
-	}
+void* start_view(void *c) {
+	system("xterm ./a.out");
+	exit(0);
 }
 
+void View::openView() {
+	pthread_t* id = (pthread_t*) malloc(sizeof(int)*2);
+	pthread_create(id, NULL, start_view, NULL);
+	ThreadManager::getInstance()->add(id);
+}
+
+void View::close() {
+}
 
 void View::onFileStart(string f) {
 	FileInTransfert s;

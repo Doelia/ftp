@@ -28,6 +28,12 @@ bool Connexion::sendPaquet(Packet* p) {
 	char* buffer = p->constructPacket();
 	int sock_err = send(this->sock, buffer, MAX_SIZE_PAQUETS, 0);
 	free(buffer);
-	return sock_err;
+
+	if (sock_err < 0) {
+		perror("Erreur lors de l'envoi du paquet");
+		return false;
+	} else {
+		return true;
+	}
 }
 

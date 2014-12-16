@@ -1,6 +1,12 @@
 #include "commun/header-commun.h"
 #include "client/header-client.h"
 
+void stop() {
+    cout << "Fermerture..." << endl;
+    //View::getInstance()->close();
+    exit(0);
+}
+
 int main() {
 
     ThreadManager::init();
@@ -10,7 +16,7 @@ int main() {
  
 	cout << "Lancement du client..." << endl;
     
-    if (networkManager->connectToServer("127.0.0.1", PORT_SERVER)) {
+    if (networkManager->connectToServer("10.5.12.12", PORT_SERVER)) {
         networkManager->start_listenMessages();
 
         Shell::getInstance()->welcomeMsg();
@@ -20,5 +26,6 @@ int main() {
     }
 
     ThreadManager::getInstance()->joinAll();
+    stop();
 }
 

@@ -3,6 +3,9 @@
 
 #include "header-client.h"
 
+void* start_view(void *c);
+
+
 struct FileInTransfert {
 	int pourcent;
 	string nameFile;
@@ -17,6 +20,7 @@ public:
 
 	View();
 	void openView();
+	void close();
 
 	virtual void onFileStart(string);
 	virtual void onFileProgress(string nameFile, int pourcent);
