@@ -11,8 +11,8 @@ class ProgressNotifier {
 
 public:
 	ProgressNotifier();
-	void onFileStart(string);
-	void onFileProgress(string nameFile, int pourcent);
+	virtual void onFileStart(string);
+	virtual void onFileProgress(string nameFile, int pourcent);
 private:
 
 };

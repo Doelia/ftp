@@ -1,7 +1,6 @@
 #ifndef FILERECEIVER_H
 #define FILERECEIVER_H
 
-#include "header-commun.h"
 #include "Packet.h"
 
 using namespace std;
@@ -20,9 +19,9 @@ public:
 private:
 	static FileReceiver* instance;
 
+	vector<string>* listFiles; // Liste des noms de fichiers, le I correspond au I dans les autres teableaux
 	vector<int>* descs; // Descripteurs des fichiers en cours de transferts
 	vector<double>* sizeFiles;
-	vector<string>* listFiles;
 	vector<double>* transfered;
 	ProgressNotifier* pn;
 

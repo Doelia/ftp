@@ -18,6 +18,7 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
+#include <fstream>
 
 #include <sys/stat.h>
 #include <sys/ipc.h>

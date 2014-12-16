@@ -47,6 +47,7 @@ void FileManager::sendPartFile(string nameFile, char* part, int length, Connexio
 	if (p->getSizeData() == 0) {
 		cout << "Erreur, data vide" << endl;
 	}
+	usleep(100*1000);
 	connexion->sendPaquet(p);
 	p->deleteFromMemory();
 	free(p);

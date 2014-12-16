@@ -10,9 +10,10 @@
 void displayFile() {
     FILE *f = fopen("logs.txt","rt");
     char c;
-    while((c=fgetc(f))!=EOF){
-        printf("%c",c);
+    while ((c=fgetc(f))!=EOF) {
+        printf("%c", c);
     }
+    printf("%d");
     fclose(f);
 }
 
@@ -39,8 +40,8 @@ void waitSignal() {
 
 int main() {
     while (1) {
-        system("clear");
         waitSignal();
+        system("clear");
         displayFile();
     }
     
