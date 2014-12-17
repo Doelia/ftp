@@ -14,13 +14,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
-#include <sys/types.h>
 #include <signal.h>
-
-#include <vector>
-#include <sstream>
-#include <iostream>
-#include <fstream>
 
 #include <sys/stat.h>
 #include <sys/ipc.h>
@@ -29,6 +23,11 @@
 #include <sys/sem.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+
+#include <vector>
+#include <sstream>
+#include <iostream>
+#include <fstream>
 
 #include "Packet.h"
 #include "ThreadManager.h"

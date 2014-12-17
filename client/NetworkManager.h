@@ -11,6 +11,7 @@ public:
 
 	bool connectToServer(string, int);
 	void sendGetFile(string);
+	void sendPutFile(string, int);
 
 private:
 	static NetworkManager* instance;

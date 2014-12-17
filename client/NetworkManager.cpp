@@ -100,4 +100,9 @@ void NetworkManager::sendGetFile(string namefile) {
 	free(p);
 }
 
-
+void NetworkManager::sendPutFile(string nameFile, int size) {
+	Packet* p = new Packet("PUT", nameFile, size, NULL);
+	this->sendPaquet(p);
+	p->deleteFromMemory();
+	free(p);
+}

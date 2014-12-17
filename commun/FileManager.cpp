@@ -3,6 +3,10 @@
 FileManager* FileManager::instance = NULL;
 
 FileManager* FileManager::getInstance() {
+	if (FileManager::instance == NULL) {
+		perror("Erreur, file manager non initialisé");
+		stop();
+	}
 	return FileManager::instance;
 }
 
@@ -47,7 +51,7 @@ bool FileManager::sendPartFile(string nameFile, char* part, int length, Connexio
 	if (p->getSizeData() == 0) {
 		cout << "Erreur, data vide" << endl;
 	}
-	usleep(100*1000);
+	usleep(10*1000);
 	bool err = connexion->sendPaquet(p);
 	p->deleteFromMemory();
 	free(p);

@@ -22,7 +22,6 @@ class Packet {
 
 		static void displayPacket(char*, int);
 		static int getSizeHeaders();
-
 		
 	private:
 		char* char_id; // 3 caractères pour décrire le paquet
@@ -30,7 +29,6 @@ class Packet {
 		int sizeData;
 		char* data;
 		bool haveData;
-
 		bool isIdPacketWithoutData();
 };
 

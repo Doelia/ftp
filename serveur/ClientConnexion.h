@@ -6,10 +6,8 @@
 class ClientConnexion : public Connexion {
 
 private:
-
 	void onPaquet(char*, int);
 	void onPaquet_get(string);
-
 
 public:
 	ClientConnexion(int);

@@ -13,7 +13,7 @@ void displayFile() {
     while ((c=fgetc(f))!=EOF) {
         printf("%c", c);
     }
-    printf("%d");
+    printf("\n");
     fclose(f);
 }
 

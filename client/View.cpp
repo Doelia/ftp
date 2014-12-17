@@ -49,14 +49,19 @@ void View::refreshView() {
 }
 
 void* start_view(void *c) {
-	system("xterm ./a.out");
+	system("xterm ./viewer");
 	exit(0);
 }
 
 void View::openView() {
-	pthread_t* id = (pthread_t*) malloc(sizeof(int)*2);
-	pthread_create(id, NULL, start_view, NULL);
-	ThreadManager::getInstance()->add(id);
+	if (!access ("viewer", X_OK)) {
+		pthread_t* id = (pthread_t*) malloc(sizeof(int)*2);
+		pthread_create(id, NULL, start_view, NULL);
+		ThreadManager::getInstance()->add(id);
+	} else {
+		perror("Erreur lors de l'ouverture de l'executable 'viewer' : ");
+		stop();
+	}
 }
 
 void View::close() {
@@ -66,6 +71,7 @@ void View::onFileStart(string f) {
 	FileInTransfert s;
 	s.pourcent = 0; 
 	s.nameFile = f;
+	s.isFinished = false;
 	this->listTranfers->push_back(s);
 }
 
@@ -87,13 +93,26 @@ void View::onFileProgress(string nameFile, int pourcent) {
 	}
 }
 
+void View::onFileEnd(string nameFile) {
+	int i = this->getIndexOfFile(nameFile);
+	if (i >= 0) {
+		this->listTranfers->at(i).isFinished = true;
+		this->constructFrame();
+		this->refreshView();
+	}
+}
+
 void View::constructFrame() {
 	out.str("");
 	out << "Fichiers en cours de récéptions" << endl;
 
 	for (int i=0; i < this->listTranfers->size(); i++) {
 		FileInTransfert s = this->listTranfers->at(i);
-		out << s.nameFile << " " << this->getProgressBar(s.pourcent) << " " << s.pourcent << "%" << endl;
+		if (s.isFinished) {
+			out << s.nameFile << " - Terminé!" << endl;
+		} else {
+			out << s.nameFile << " " << this->getProgressBar(s.pourcent) << " " << s.pourcent << "%" << endl;
+		}
 	}
 	
 	out << "----------------------------------------------------" << endl;

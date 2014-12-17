@@ -10,6 +10,7 @@ struct FileInTransfert {
 	int pourcent;
 	string nameFile;
 	int type; // 1 = DL, 2 = UP
+	bool isFinished;
 };
 
 class View : public ProgressNotifier {
@@ -24,6 +25,7 @@ public:
 
 	virtual void onFileStart(string);
 	virtual void onFileProgress(string nameFile, int pourcent);
+	virtual void onFileEnd(string);
 
 private:
 	static View* instance;

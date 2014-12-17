@@ -21,7 +21,7 @@ void Connexion::listenMessages() {
 		this->onPaquet(buff, retour);
 		initBuffer(&buff, MAX_SIZE_PAQUETS, false);
 	}
-    cout << "Fin d'attende de message." << endl;
+	cout << "Fin d'attende de message." << endl;
 }
 
 bool Connexion::sendPaquet(Packet* p) {

@@ -3,12 +3,13 @@
 
 void stop() {
     cout << "Fermerture..." << endl;
-    //View::getInstance()->close();
+    View::getInstance()->close();
     exit(0);
 }
 
 int main() {
 
+    FileManager::init();
     ThreadManager::init();
     Shell::init();
     FileReceiver::init(View::init());
@@ -16,7 +17,7 @@ int main() {
  
 	cout << "Lancement du client..." << endl;
     
-    if (networkManager->connectToServer("10.5.12.12", PORT_SERVER)) {
+    if (networkManager->connectToServer("127.0.0.1", PORT_SERVER)) {
         networkManager->start_listenMessages();
 
         Shell::getInstance()->welcomeMsg();

@@ -94,11 +94,28 @@ void Shell::traiterCommand(string line) {
 		string nameFile = parts.at(1);
 		NetworkManager::getInstance()->sendGetFile(nameFile);
 		this->waitReponse();
-		sleep(1);
 		return;
 	}
 
-	sleep(1);
+	if (cmd.compare("put") == 0) {
+
+		if (parts.size() < 2) {
+			cout << "Veuillez entrer un nom de fichier." << endl;
+			return;
+		}
+
+		string nameFile = parts.at(1);
+		if (FileManager::getInstance()->exists(nameFile)) {
+			int size = fm->getSize(nameFile);
+			NetworkManager::getInstance->sendPutFile(nameFile, size);
+		} else {
+			cout << "Ce fichier est introuvable." << endl;
+			return;
+		}
+	
+		return;
+	}
+
 
 	cout << "Commande introuvable." << endl;
 }
