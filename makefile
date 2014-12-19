@@ -1,5 +1,5 @@
 default:
-	g++ -o serv serveur/*.cpp commun/*.cpp serveur.cpp -lpthread
-	g++ -o cli commun/*.cpp client/*.cpp client.cpp -lpthread
-	gcc -o viewer client-view.c
+	g++ -o app_server/serv src/serveur/*.cpp src/commun/*.cpp src/serveur.cpp -lpthread
+	g++ -o app_client/cli src/commun/*.cpp src/client/*.cpp src/client.cpp -lpthread
+	gcc -o app_client/viewer src/client-view.c
 	
