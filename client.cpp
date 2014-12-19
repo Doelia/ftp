@@ -1,5 +1,3 @@
-#define DIR_FILES = "./dir_client/"
-
 #include "commun/header-commun.h"
 #include "client/header-client.h"
 
@@ -11,7 +9,7 @@ void stop() {
 
 int main() {
 
-    FileManager::init();
+    FileManager::init("./dir_client/");
     ThreadManager::init();
     Shell::init();
     FileReceiver::init(View::init());

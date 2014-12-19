@@ -50,7 +50,7 @@ void NetworkManager::onPaquet(char* paquet, int size) {
 		if (p->getArgument().compare("1") == 0) {
 			cout << "Fichier trouvé. Le transfert va démarrer." << endl;
 		} else {
-			cout << "Fichier introuvable. Veuillez vérifier le nom entré puis réésayez." << endl;
+			cout << "Fichier introuvable sur le serveur. Veuillez vérifier le nom entré puis réésayez." << endl;
 		}
 		Shell::getInstance()->unlockShell();
 	}

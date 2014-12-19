@@ -10,23 +10,32 @@ FileManager* FileManager::getInstance() {
 	return FileManager::instance;
 }
 
-FileManager* FileManager::init() {
+FileManager* FileManager::init(string dir) {
 	FileManager::instance = new FileManager();
+	FileManager::instance->dirFiles = dir;
 	return FileManager::instance;
 }
 
 bool FileManager::exists(string nameFile) {
+	string realName = this->dirFiles + nameFile;
+	return this->keyExists(realName);
+}
+
+bool FileManager::keyExists(string nameFile) {
+	string realName = this->dirFiles + nameFile;
 	FILE *file;
-	if ((file = fopen(nameFile.c_str(), "r"))) {
+	if ((file = fopen(realName.c_str(), "r"))) {
 		fclose(file);
 		return 1;
 	}
 	return 0;
 }
 
+
 int FileManager::getSize(string nameFile) {
+	string realName = this->dirFiles + nameFile;
 	FILE *file;
-	if ((file = fopen(nameFile.c_str(), "r"))) {
+	if ((file = fopen(realName.c_str(), "r"))) {
 		fseek(file, 0L, SEEK_END);
 		int size = ftell(file);
 		fclose(file);
@@ -37,15 +46,17 @@ int FileManager::getSize(string nameFile) {
 }
 
 int FileManager::createFile(string nameFile) {
-	string realName = DIR_FILES + nameFile;
-	int fd = open(realName.c_str(), O_CREAT | O_WRONLY);
+	return this->createKey(this->dirFiles + nameFile);
+}
+
+int FileManager::createKey(string nameFile) {
+	int fd = open(nameFile.c_str(), O_CREAT | O_WRONLY);
 	if (fd < 0) {
 		perror("Erreur lors de la création du fichier ");
 		stop();
 	}
 	return fd;
 }
-
 
 bool FileManager::sendPartFile(string nameFile, char* part, int length, Connexion* connexion) {
 	Packet* p = new Packet("FDA", nameFile, length, part);
@@ -91,7 +102,7 @@ void FileManager::startSendFile(string nameFile, Connexion* connexion) {
 void FileManager::startSendFile_threaded(string nameFile, Connexion* connexion) {
 	cout << "Envoi du fichier " << nameFile << " au client..." << endl;
 
-	string realNameFile = DIR_FILES + nameFile;
+	string realNameFile = this->dirFiles + nameFile;
 	int descriptFichier = open(realNameFile.c_str(), O_RDONLY);
 	int size_read_eachTime = MAX_SIZE_PAQUETS - Packet::getSizeHeaders() - 100;
 

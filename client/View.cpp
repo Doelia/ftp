@@ -15,8 +15,8 @@ View* View::init() {
 View::View() {
 
 	string fileKey = "./sem_disp";
-	if (!FileManager::getInstance()->exists(fileKey)) {
-		FileManager::getInstance()->createFile(fileKey);
+	if (!FileManager::getInstance()->keyExists(fileKey)) {
+		FileManager::getInstance()->createKey(fileKey);
 	}
 
 	key_t key = ftok("./sem_disp", 10);

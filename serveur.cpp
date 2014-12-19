@@ -1,5 +1,3 @@
-#define DIR_FILES = "./dir_server/"
-
 #include "serveur/header-serveur.h"
 
 void stop() {
@@ -9,7 +7,7 @@ void stop() {
 
 int main() {
 
-	FileManager::init();
+	FileManager::init("./dir_client/");
 	ThreadManager::init();
 	ServerManager::init();
 	FileReceiver::init(NULL);

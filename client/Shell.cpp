@@ -14,8 +14,8 @@ void Shell::init() {
 Shell::Shell() {
 
 	string fileKey = "./sem";
-	if (!FileManager::getInstance()->exists(fileKey)) {
-		FileManager::getInstance()->createFile(fileKey);
+	if (!FileManager::getInstance()->keyExists(fileKey)) {
+		FileManager::getInstance()->createKey(fileKey);
 	}
 
 	key_t key = ftok("./sem", 10);
