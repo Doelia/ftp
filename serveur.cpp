@@ -1,3 +1,5 @@
+#define DIR_FILES = "./dir_server/"
+
 #include "serveur/header-serveur.h"
 
 void stop() {
@@ -17,7 +19,6 @@ int main() {
 	if (!(error = server->startServer())) {
 		server->acceptClients();
 	}
-
 
 	cout << "Fermerture du serveur..." << endl;
 	ThreadManager::getInstance()->joinAll();

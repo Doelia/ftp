@@ -182,8 +182,10 @@ void Packet::display() {
 	cout << "ID=" << this->getId() << endl;
 	cout << "arg=" << this->getArgument() << endl;
 	cout << "sizeData=" << this->getSizeData() << endl;
-	cout << "data:";
-	Packet::displayPacket(this->getDatas(), this->getSizeData());
+	if (this->haveData && !this->isIdPacketWithoutData()) {
+		cout << "data:";
+		Packet::displayPacket(this->getDatas(), this->getSizeData());
+	}
 	cout << "}" << endl;
 }
 
@@ -193,6 +195,10 @@ void Packet::deleteFromMemory() {
 }
 
 bool Packet::isIdPacketWithoutData() {
-	return (this->getId().compare("FID") == 0);
+	return (
+		this->getId().compare("FID") == 0 ||
+		this->getId().compare("CPU") == 0 ||
+		this->getId().compare("PUT") == 0
+	);
 }
 

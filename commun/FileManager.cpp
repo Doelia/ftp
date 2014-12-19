@@ -37,7 +37,8 @@ int FileManager::getSize(string nameFile) {
 }
 
 int FileManager::createFile(string nameFile) {
-	int fd = open(nameFile.c_str(), O_CREAT | O_WRONLY);
+	string realName = DIR_FILES + nameFile;
+	int fd = open(realName.c_str(), O_CREAT | O_WRONLY);
 	if (fd < 0) {
 		perror("Erreur lors de la création du fichier ");
 		stop();
@@ -90,7 +91,8 @@ void FileManager::startSendFile(string nameFile, Connexion* connexion) {
 void FileManager::startSendFile_threaded(string nameFile, Connexion* connexion) {
 	cout << "Envoi du fichier " << nameFile << " au client..." << endl;
 
-	int descriptFichier = open(nameFile.c_str(), O_RDONLY);
+	string realNameFile = DIR_FILES + nameFile;
+	int descriptFichier = open(realNameFile.c_str(), O_RDONLY);
 	int size_read_eachTime = MAX_SIZE_PAQUETS - Packet::getSizeHeaders() - 100;
 
 	if (size_read_eachTime <= 0) {

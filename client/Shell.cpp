@@ -106,8 +106,8 @@ void Shell::traiterCommand(string line) {
 
 		string nameFile = parts.at(1);
 		if (FileManager::getInstance()->exists(nameFile)) {
-			int size = fm->getSize(nameFile);
-			NetworkManager::getInstance->sendPutFile(nameFile, size);
+			int size = FileManager::getInstance()->getSize(nameFile);
+			NetworkManager::getInstance()->sendPutFile(nameFile, size);
 		} else {
 			cout << "Ce fichier est introuvable." << endl;
 			return;

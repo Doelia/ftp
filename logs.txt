@@ -1,3 +1,3 @@
 Fichiers en cours de récéptions
-out_file.pdf Terminé!
+out_file.pdf - Terminé!
 ----------------------------------------------------

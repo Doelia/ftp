@@ -20,6 +20,7 @@ private:
 	void onPaquet_message(string);
 	void onPaquet_fileData(Packet* p);
 	void onPaquet_fileHeader(string, int);
+	void onPaquet_putConfirm(string, bool);
 
 };
 

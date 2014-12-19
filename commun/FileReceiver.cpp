@@ -60,9 +60,9 @@ int FileReceiver::recvData(Packet* p) {
 
 		if (this->pn != NULL) {
 			int pourcent = this->transfered->at(idFile) / totalSize * 100;
-			this->pn->onFileProgress("out_"+nameFile, pourcent);
+			this->pn->onFileProgress(nameFile, pourcent);
 			if (this->transfered->at(idFile) >= this->sizeFiles->at(idFile)) {
-				this->pn->onFileEnd("out_"+nameFile);
+				this->pn->onFileEnd(nameFile);
 			}
 		}
 

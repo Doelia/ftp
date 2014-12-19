@@ -8,9 +8,11 @@ class ClientConnexion : public Connexion {
 private:
 	void onPaquet(char*, int);
 	void onPaquet_get(string);
+	void onPaquet_fileData(Packet* p);
 
 public:
 	ClientConnexion(int);
+	void onPaquet_put(string, int);
 
 };
 

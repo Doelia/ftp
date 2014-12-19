@@ -1,3 +1,5 @@
+#define DIR_FILES = "./dir_client/"
+
 #include "commun/header-commun.h"
 #include "client/header-client.h"
 
@@ -29,4 +31,3 @@ int main() {
     ThreadManager::getInstance()->joinAll();
     stop();
 }
-

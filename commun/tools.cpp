@@ -1,7 +1,7 @@
 #include "tools.h"
 
 void initBuffer(char** buff, int size, bool aloc) {
-	if (true) // TODO
+	if (aloc) // TODO
 		*buff = (char*) malloc(sizeof(char) * size + 1);
 	for (int i =0; i < size+1; i++) {
 		buff[0][i] = '\0';
