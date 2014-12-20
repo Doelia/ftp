@@ -17,6 +17,7 @@ public:
 	
 	int createFileInDir(string);  
 	int createFile(string);  
+	int openFileInDir(string);
 
 	void createDirectoryIfNotExists(string name);
 

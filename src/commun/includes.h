@@ -34,6 +34,7 @@
 #include "ProgressNotifier.h"
 #include "Connexion.h"
 #include "FileReceiver.h"
+#include "FileSender.h"
 #include "tools.h"
 #include "FileManager.h"
 

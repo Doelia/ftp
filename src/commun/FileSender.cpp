@@ -10,10 +10,13 @@ FileSender* FileSender::getInstance() {
 	return FileSender::instance;
 }
 
-FileSender* FileSender::init(ProgressNotifier* p_n) {
+void FileSender::init(ProgressNotifier* p_n) {
 	FileSender::instance = new FileSender();
 	FileSender::instance->pn = p_n;
-	return FileSender::instance;
+}
+
+FileSender::FileSender() {
+
 }
 
 
@@ -29,7 +32,7 @@ bool FileSender::sendPartFile(string nameFile, char* part, int length, Connexion
 	return err;
 }
 
-void* FileSender(void* pa) {
+void* startSendFile_thread(void* pa) {
 	struct t {
 		string n;
 		Connexion* c;
@@ -63,8 +66,7 @@ void FileSender::startSendFile(string nameFile, Connexion* connexion) {
 void FileSender::startSendFile_threaded(string nameFile, Connexion* connexion) {
 	cout << "Envoi du fichier " << nameFile << " au client..." << endl;
 
-	string realNameFile = this->dirFiles + nameFile;
-	int descriptFichier = open(realNameFile.c_str(), O_RDONLY);
+	int descriptFichier = FileManager::getInstance()->openFileInDir(nameFile);
 	int size_read_eachTime = MAX_SIZE_PAQUETS - Packet::getSizeHeaders() - 100;
 
 	if (size_read_eachTime <= 0) {

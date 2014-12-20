@@ -42,7 +42,7 @@ void ClientConnexion::onPaquet_get(string nameFile) {
 		cout << "Taille du fichier = " << size << endl;
 		this->sendPaquet(new Packet("FID", nameFile, size, NULL));
 		
-		fm->startSendFile(nameFile, this);
+		FileSender::getInstance()->startSendFile(nameFile, this);
 	} else {
 		cout << "Le fichier demandé n'existe pas" << endl;
 		this->sendPaquet(new Packet("RGE", "0", 0, NULL));

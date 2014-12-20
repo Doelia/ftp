@@ -13,13 +13,14 @@ public:
 	static FileSender* getInstance();
 	static void init(ProgressNotifier*);
 
-	FileSender(ProgressNotifier*);
+	FileSender();
 	void startSendFile(string, Connexion*);
 	void startSendFile_threaded(string, Connexion*);
 	
 private:
 	static FileSender* instance;
 	bool sendPartFile(string, char*, int, Connexion*);
+	ProgressNotifier* pn;
 
 	
 

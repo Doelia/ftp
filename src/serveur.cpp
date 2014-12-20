@@ -11,6 +11,7 @@ int main() {
 	ThreadManager::init();
 	ServerManager::init();
 	FileReceiver::init(NULL);
+	FileSender::init(NULL);
 
 	ServerManager* server = ServerManager::getInstance();
 	int error = 0;

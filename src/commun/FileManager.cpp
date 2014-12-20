@@ -55,6 +55,17 @@ int FileManager::createFile(string nameFile) {
 	return fd;
 }
 
+int FileManager::openFileInDir(string nameFile) {
+	string realName = nameFile + this->dirFiles;
+	int fd = open(realName.c_str(), O_RDONLY);
+	if (fd < 0) {
+		string s = "Erreur lors de l'ouverture du fichier " + nameFile;
+		perror(s.c_str());
+		stop();
+	}
+	return fd;
+}
+
 void FileManager::createDirectoryIfNotExists(string name) {
 	struct stat st = {0};
 	if (stat(name.c_str(), &st) == -1) {

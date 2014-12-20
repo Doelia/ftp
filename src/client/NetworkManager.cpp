@@ -85,7 +85,7 @@ void NetworkManager::onPaquet_message(string message) {
 
 void NetworkManager::onPaquet_putConfirm(string nameFile, bool isOk) {
 	if (isOk) {
-		FileManager::getInstance()->startSendFile(nameFile, this);
+		FileSender::getInstance()->startSendFile(nameFile, this);
 	} else {
 		cout << "Impossible d'envoyer le fichier " << nameFile << endl;
 	}
