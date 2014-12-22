@@ -86,9 +86,11 @@ void NetworkManager::onPaquet_message(string message) {
 void NetworkManager::onPaquet_putConfirm(string nameFile, bool isOk) {
 	if (isOk) {
 		FileSender::getInstance()->startSendFile(nameFile, this);
+		cout << "Le transfert a commencé." << endl;
 	} else {
-		cout << "Impossible d'envoyer le fichier " << nameFile << endl;
+		cout << "Impossible d'envoyer le fichier " << nameFile << ", celui-ci existe déjà sur le serveur." << endl;
 	}
+	Shell::getInstance()->unlockShell();
 }
 
 void NetworkManager::onPaquet_fileHeader(string nameFile, int sizeFile) {

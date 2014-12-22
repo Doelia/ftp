@@ -6,5 +6,6 @@
 #include "../commun/header-commun.h"
 #include "ClientConnexion.h"
 #include "ServerManager.h"
+#include "LogsTransfers.h"
 
 #endif

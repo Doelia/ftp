@@ -7,7 +7,12 @@ void stop() {
     exit(0);
 }
 
-int main() {
+int main(int args, char* argcs[]) {
+
+    if (args < 2) {
+        cout << "Veuillez spécifier l'adresse du serveur. Exemple : ./serv localhost" << endl;
+        return 0;
+    }
 
     FileManager::init("./dir_client/");
     ThreadManager::init();
@@ -19,7 +24,8 @@ int main() {
  
 	cout << "Lancement du client..." << endl;
     
-    if (networkManager->connectToServer("127.0.0.1", PORT_SERVER)) {
+    string ip = argcs[1];
+    if (networkManager->connectToServer(ip, PORT_SERVER)) {
         networkManager->start_listenMessages();
         Shell::getInstance()->welcomeMsg();
         View::getInstance()->openView();

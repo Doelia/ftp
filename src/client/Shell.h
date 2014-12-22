@@ -23,6 +23,7 @@ private:
 	int semid;
 	static Shell* instance;
 	void traiterCommand(string);
+	void printHelp();
 
 };
 

@@ -4,7 +4,7 @@ FileManager* FileManager::instance = NULL;
 
 FileManager* FileManager::getInstance() {
 	if (FileManager::instance == NULL) {
-		perror("Erreur, file manager non initialisé");
+		perror("FileManager:: Erreur, file manager non initialisé");
 		stop();
 	}
 	return FileManager::instance;
@@ -36,7 +36,7 @@ int FileManager::getSize(string nameFile) {
 		fclose(file);
 		return size;
 	}
-	cout << "Erreur. Taille de fichier introuvable." << endl;
+	cout << "FileManager:: Erreur. Taille de fichier introuvable." << endl;
 	return -1;
 }
 
@@ -46,9 +46,9 @@ int FileManager::createFileInDir(string nameFile) {
 
 
 int FileManager::createFile(string nameFile) {
-	int fd = open(nameFile.c_str(), O_CREAT | O_WRONLY);
+	int fd = open(nameFile.c_str(), O_CREAT | 777);
 	if (fd < 0) {
-		string s = "Erreur lors de la création du fichier " + nameFile;
+		string s = "FileManager:: Erreur lors de la création du fichier " + nameFile;
 		perror(s.c_str());
 		stop();
 	}
@@ -56,10 +56,10 @@ int FileManager::createFile(string nameFile) {
 }
 
 int FileManager::openFileInDir(string nameFile) {
-	string realName = nameFile + this->dirFiles;
+	string realName = this->dirFiles + nameFile;
 	int fd = open(realName.c_str(), O_RDONLY);
 	if (fd < 0) {
-		string s = "Erreur lors de l'ouverture du fichier " + nameFile;
+		string s = "FileManager:: Erreur lors de l'ouverture du fichier " + realName;
 		perror(s.c_str());
 		stop();
 	}

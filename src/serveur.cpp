@@ -10,7 +10,7 @@ int main() {
 	FileManager::init("./dir_server/");
 	ThreadManager::init();
 	ServerManager::init();
-	FileReceiver::init(NULL);
+	FileReceiver::init(new LogsTransfers());
 	FileSender::init(NULL);
 
 	ServerManager* server = ServerManager::getInstance();

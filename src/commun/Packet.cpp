@@ -51,9 +51,9 @@ char* Packet::constructPacket() {
 	}
 
 	char* constructSize;
-	initBuffer(&constructSize, 9);
+	initBuffer(&constructSize, 21);
 	sprintf(constructSize, "%d", sizeData);
-	for (int i=0; i < 8; i++) {
+	for (int i=0; i < 20; i++) {
 		packet[iPacket++] = constructSize[i];
 	}
 	free(constructSize);
@@ -97,8 +97,8 @@ Packet::Packet(char* packet, int sizeOfPacket) {
 	}
 
 	char* sizeDataChars;
-	initBuffer(&sizeDataChars, 9);
-	for (int i=0; i < 8; i++) {
+	initBuffer(&sizeDataChars, 21);
+	for (int i=0; i < 20; i++) {
 		sizeDataChars[i] = packet[iPacket++];
 	}
 	this->sizeData = atoi(sizeDataChars);
@@ -143,7 +143,7 @@ int Packet::getSizeHeaders() {
 
 	sizePacket += 3; // Taille de l'ID
 	sizePacket += 20; // Taille du parametre
-	sizePacket += 8; // Taille de l'entier
+	sizePacket += 20; // Taille de l'entier
 
 	sizePacket += 1;
 

@@ -31,8 +31,9 @@ int FileReceiver::prepareTransfert(string nameFile, int size) {
 		this->listFiles->push_back(nameFile);
 
 		if (this->pn != NULL) {
-			this->pn->onFileStart(nameFile);
+			this->pn->onFileStart(nameFile, size, 2);
 		}
+
 	} else {
 		string s = "Erreur lors de la création du fichier " + nameFile;
 		perror(s.c_str());
@@ -59,13 +60,18 @@ int FileReceiver::recvData(Packet* p) {
 	if ((write(desc, datas, lengthInt))) {
 		this->transfered->at(idFile) += (double) lengthInt;
 
+		int pourcent = this->transfered->at(idFile) / totalSize * 100;
 		if (this->pn != NULL) {
-			int pourcent = this->transfered->at(idFile) / totalSize * 100;
-			this->pn->onFileProgress(nameFile, pourcent);
-			if (this->transfered->at(idFile) >= this->sizeFiles->at(idFile)) {
-				this->pn->onFileEnd(nameFile);
+			this->pn->onFileProgress(nameFile, pourcent, 2);
+		}
+
+		if (this->transfered->at(idFile) >= this->sizeFiles->at(idFile)) {
+			if (this->pn != NULL) {
+				this->pn->onFileEnd(nameFile, 2);
+				this->listFiles->at(idFile) = "finished";
 			}
 		}
+
 		return 1;
 	}
 

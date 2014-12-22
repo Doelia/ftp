@@ -15,7 +15,7 @@ ThreadManager::ThreadManager() {
 }
 
 void ThreadManager::add(pthread_t* t) {
-	this->display("Un thread a été ajouté");
+	//this->display("Un thread a été ajouté");
 	this->threads->push_back(t);
 }
 

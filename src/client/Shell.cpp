@@ -76,6 +76,14 @@ void Shell::promptCommand() {
 	stop();
 }
 
+void Shell::printHelp() {
+	cout << "Commandes disponibles :" << endl;
+	cout << "- get <nom du fichier> Permet de récupérer un fichier stocké sur le serveur" << endl;
+	cout << "- put <nom du fichier> Permet de récupérer d'envoyer un fichier sur le serveur" << endl;
+	cout << "- ls Permet de lister les fichiers stockés sur le serveur" << endl;
+	cout << "- stop : Ferme l'application" << endl;
+}
+
 void Shell::traiterCommand(string line) {
 
 	vector<string> parts = split(line, " ");
@@ -84,6 +92,12 @@ void Shell::traiterCommand(string line) {
 	}
 
 	string cmd = parts.at(0);
+
+	if (cmd.compare("help") == 0) {
+		this->printHelp();
+		return;
+	}
+
 	if (cmd.compare("get") == 0) {
 
 		if (parts.size() < 2) {
@@ -94,7 +108,7 @@ void Shell::traiterCommand(string line) {
 		string nameFile = parts.at(1);
 
 		if (FileManager::getInstance()->fileExistsInDir(nameFile)) {
-			cout << "Le fichier" << nameFile << " existe déjà dans votre répértoire. Récéption imposible." << endl;
+			cout << "Le fichier" << nameFile << " existe déjà dans votre répértoire. Reception imposible." << endl;
 			return;
 		}
 
@@ -114,8 +128,9 @@ void Shell::traiterCommand(string line) {
 		if (FileManager::getInstance()->fileExistsInDir(nameFile)) {
 			int size = FileManager::getInstance()->getSize(nameFile);
 			NetworkManager::getInstance()->sendPutFile(nameFile, size);
+			this->waitReponse();
 		} else {
-			cout << "Ce fichier est introuvable." << endl;
+			cout << "Ce fichier est introuvable dans votre répértoire." << endl;
 			return;
 		}
 	

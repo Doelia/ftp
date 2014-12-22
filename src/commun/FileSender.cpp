@@ -25,7 +25,7 @@ bool FileSender::sendPartFile(string nameFile, char* part, int length, Connexion
 	if (p->getSizeData() == 0) {
 		cout << "Erreur, data vide" << endl;
 	}
-	usleep(10*1000);
+	//usleep(10*1000);
 	bool err = connexion->sendPaquet(p);
 	p->deleteFromMemory();
 	free(p);
@@ -64,7 +64,12 @@ void FileSender::startSendFile(string nameFile, Connexion* connexion) {
 }
 
 void FileSender::startSendFile_threaded(string nameFile, Connexion* connexion) {
-	cout << "Envoi du fichier " << nameFile << " au client..." << endl;
+
+	int totalSize = FileManager::getInstance()->getSize(nameFile);
+	cout << "size=" << totalSize << endl;
+	if (this->pn != NULL) {
+		this->pn->onFileStart(nameFile, totalSize, 1);
+	}
 
 	int descriptFichier = FileManager::getInstance()->openFileInDir(nameFile);
 	int size_read_eachTime = MAX_SIZE_PAQUETS - Packet::getSizeHeaders() - 100;
@@ -75,25 +80,37 @@ void FileSender::startSendFile_threaded(string nameFile, Connexion* connexion) {
 		return;
 	}
 
-	cout << size_read_eachTime << " caractères seront lu par paquets" << endl;
-
 	char* buffer;
 	initBuffer(&buffer, size_read_eachTime);
 
-	cout << "Envoi du fichier en cours..." << endl;
 	int nbrRead = 0;
+	int totalSended = 0;
 	bool stop = false;
+	int lastPourcent = -1;
 	while (!stop && (nbrRead = read(descriptFichier, buffer, size_read_eachTime))) {
 		if (!this->sendPartFile(nameFile, buffer, nbrRead, connexion)) {
 			cout << "Erreur lors du transfert." << endl;
 			stop = true;
+		} else {
+			if (this->pn != NULL) {
+				totalSended += nbrRead;
+				int pourcent = totalSended / totalSize * 100;
+				if (lastPourcent != pourcent) {
+					this->pn->onFileProgress(nameFile, pourcent, 1);
+					lastPourcent = pourcent;
+				}
+				
+			}
+			initBuffer(&buffer, size_read_eachTime, false);
 		}
-		initBuffer(&buffer, size_read_eachTime, false);
 	}
 
 	close(descriptFichier);
 
-	cout << "Fin d'envoi du fichier" << endl;
+	if (this->pn != NULL) {
+		this->pn->onFileEnd(nameFile, 1);
+	}
+
 }
 
 

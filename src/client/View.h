@@ -9,7 +9,7 @@ void* start_view(void *c);
 struct FileInTransfert {
 	int pourcent;
 	string nameFile;
-	int type; // 1 = DL, 2 = UP
+	int type; // 2 = DL, 1 = UP
 	bool isFinished;
 };
 
@@ -23,9 +23,9 @@ public:
 	void openView();
 	void close();
 
-	virtual void onFileStart(string);
-	virtual void onFileProgress(string nameFile, int pourcent);
-	virtual void onFileEnd(string);
+	virtual void onFileStart(string, int, int);
+	virtual void onFileProgress(string nameFile, int pourcent, int);
+	virtual void onFileEnd(string, int);
 
 private:
 	static View* instance;

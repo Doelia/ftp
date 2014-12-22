@@ -37,7 +37,8 @@ View::View() {
 }
 
 void View::refreshView() {
-	ofstream fichier("logs.txt", ios::out | ios::trunc);
+	cout << "refresh view" << endl;
+	ofstream fichier("/tmp/logs.txt", ios::out | ios::trunc);
 	fichier << out.rdbuf();
 	out.str("");
 
@@ -56,6 +57,8 @@ void* start_view(void *c) {
 }
 
 void View::openView() {
+	this->constructFrame();
+	this->refreshView();
 	if (!access ("viewer", X_OK)) {
 		pthread_t* id = (pthread_t*) malloc(sizeof(int)*2);
 		pthread_create(id, NULL, start_view, NULL);
@@ -69,11 +72,12 @@ void View::openView() {
 void View::close() {
 }
 
-void View::onFileStart(string f) {
+void View::onFileStart(string f, int size, int type) {
 	FileInTransfert s;
 	s.pourcent = 0; 
 	s.nameFile = f;
 	s.isFinished = false;
+	s.type = type;
 	this->listTranfers->push_back(s);
 }
 
@@ -86,7 +90,7 @@ int View::getIndexOfFile(string nameFile) {
 	return -1;
 }
 
-void View::onFileProgress(string nameFile, int pourcent) {
+void View::onFileProgress(string nameFile, int pourcent, int type) {
 	int i = this->getIndexOfFile(nameFile);
 	if (i >= 0) {
 		this->listTranfers->at(i).pourcent = pourcent;
@@ -95,7 +99,7 @@ void View::onFileProgress(string nameFile, int pourcent) {
 	}
 }
 
-void View::onFileEnd(string nameFile) {
+void View::onFileEnd(string nameFile, int type) {
 	int i = this->getIndexOfFile(nameFile);
 	if (i >= 0) {
 		this->listTranfers->at(i).isFinished = true;
@@ -106,14 +110,31 @@ void View::onFileEnd(string nameFile) {
 
 void View::constructFrame() {
 	out.str("");
-	out << "Fichiers en cours de récéptions" << endl;
+	out << "Fichiers en cours de recéptions" << endl;
 
 	for (int i=0; i < this->listTranfers->size(); i++) {
 		FileInTransfert s = this->listTranfers->at(i);
-		if (s.isFinished) {
+		if (s.type == 2) {
+			if (s.isFinished) {
 			out << s.nameFile << " - Terminé!" << endl;
-		} else {
-			out << s.nameFile << " " << this->getProgressBar(s.pourcent) << " " << s.pourcent << "%" << endl;
+			} else {
+				out << s.nameFile << " " << this->getProgressBar(s.pourcent) << " " << s.pourcent << "%" << endl;
+			}
+		}
+	}
+	
+	out << "----------------------------------------------------" << endl;
+
+	out << "Fichiers en cours d'envoi" << endl;
+
+	for (int i=0; i < this->listTranfers->size(); i++) {
+		FileInTransfert s = this->listTranfers->at(i);
+		if (s.type == 1) {
+			if (s.isFinished) {
+			out << s.nameFile << " - Terminé!" << endl;
+			} else {
+				out << s.nameFile << " " << this->getProgressBar(s.pourcent) << " " << s.pourcent << "%" << endl;
+			}
 		}
 	}
 	
