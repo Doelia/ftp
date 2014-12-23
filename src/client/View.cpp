@@ -110,7 +110,7 @@ void View::onFileEnd(string nameFile, int type) {
 
 void View::constructFrame() {
 	out.str("");
-	out << "Fichiers en cours de recéptions" << endl;
+	out << "Fichiers en cours de réceptions" << endl;
 
 	for (int i=0; i < this->listTranfers->size(); i++) {
 		FileInTransfert s = this->listTranfers->at(i);
