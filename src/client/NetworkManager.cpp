@@ -49,7 +49,10 @@ void NetworkManager::onPaquet(char* paquet, int size) {
 	else if (p->getId().compare("RGE") == 0) { // Réponse du GET
 		if (p->getArgument().compare("1") == 0) {
 			cout << "Fichier trouvé. Le transfert va démarrer." << endl;
-		} else {
+		} else if (p->getArgument().compare("2") == 0) {
+			cout << "Ce fichier existe mais n'est pas complet car il est en court de récéption sur le serveur." << endl;
+		}
+		else {
 			cout << "Fichier introuvable sur le serveur. Veuillez vérifier le nom entré puis réésayez." << endl;
 		}
 		Shell::getInstance()->unlockShell();

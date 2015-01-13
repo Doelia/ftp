@@ -14,12 +14,14 @@ View* View::init() {
 
 View::View() {
 
-	string fileKey = "/tmp/sem_view";
+	char fileKey[21];
+	sprintf(fileKey, "/tmp/sem_view%d", getpid());
+
 	if (!FileManager::getInstance()->fileExists(fileKey)) {
 		FileManager::getInstance()->createFile(fileKey);
 	}
 
-	key_t key = ftok(fileKey.c_str(), 10);
+	key_t key = ftok(fileKey, 10);
 	if (key == -1) {
 		perror("Problème lors de la réservation de la clé");
 		stop();
@@ -37,7 +39,9 @@ View::View() {
 }
 
 void View::refreshView() {
-	ofstream fichier("/tmp/logs.txt", ios::out | ios::trunc);
+	char nameFile[21];
+	sprintf(nameFile, "/tmp/logs_%d.txt", getpid());
+	ofstream fichier(nameFile, ios::out | ios::trunc);
 	fichier << out.rdbuf();
 	out.str("");
 
@@ -49,7 +53,10 @@ void View::refreshView() {
 }
 
 void* start_view(void *c) {
-	system("xterm ./viewer");
+	char cmd[21];
+	sprintf(cmd, "xterm -e \"./viewer %d\"", getpid());
+
+	system(cmd);
 	exit(0);
 	return NULL;
 }

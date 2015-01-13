@@ -32,17 +32,24 @@ void ClientConnexion::onPaquet(char* paquet, int size) {
 
 void ClientConnexion::onPaquet_get(string nameFile) {
 	FileManager* fm = FileManager::getInstance();
+	FileReceiver* fr = FileReceiver::getInstance();
 	cout << "Le client veut le fichier " << nameFile << endl;
 
 	if (fm->fileExistsInDir(nameFile)) {
-		cout << "Le fichier existe" << endl;
-		this->sendPaquet(new Packet("RGE", "1", 0, NULL));
+		if (!fr->isInTransfert(nameFile)) {
+			cout << "Le fichier existe" << endl;
+			this->sendPaquet(new Packet("RGE", "1", 0, NULL));
 
-		int size = fm->getSize(nameFile);
-		cout << "Taille du fichier = " << size << endl;
-		this->sendPaquet(new Packet("FID", nameFile, size, NULL));
+			int size = fm->getSize(nameFile);
+			cout << "Taille du fichier = " << size << endl;
+			this->sendPaquet(new Packet("FID", nameFile, size, NULL));
+			
+			FileSender::getInstance()->startSendFile(nameFile, this);
+		} else {
+			cout << "Le fichier demandé est en cours de récéption" << endl;
+			this->sendPaquet(new Packet("RGE", "2", 0, NULL));
+		}
 		
-		FileSender::getInstance()->startSendFile(nameFile, this);
 	} else {
 		cout << "Le fichier demandé n'existe pas" << endl;
 		this->sendPaquet(new Packet("RGE", "0", 0, NULL));

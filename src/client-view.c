@@ -7,8 +7,12 @@
 #include <fcntl.h>
 #include <sys/sem.h>
 
+key_t key;
+int semid ;
+char fileLogs[21];
+
 void displayFile() {
-    FILE *f = fopen("/tmp/logs.txt","r");
+    FILE *f = fopen(fileLogs,"r");
     if (f == NULL) {
         perror("Erreur à l'ouverture du fichier.");
     }
@@ -20,9 +24,6 @@ void displayFile() {
     fclose(f);
 }
 
-key_t key;
-int semid ;
-
 void waitSignal() {
     struct sembuf op;
     op.sem_num = 0;
@@ -31,9 +32,13 @@ void waitSignal() {
     semop(semid, &op, 1);
 }
 
-int main() {
+int main(int argx, char** charg) {
 
-    key = ftok("/tmp/sem_view", 10);
+    char nameFile[21];
+    sprintf(nameFile, "/tmp/sem_view%s", charg[1]);
+    sprintf(fileLogs, "/tmp/logs_%s.txt", charg[1]);
+
+    key = ftok(nameFile, 10);
     if (key == -1) {
         perror("Problème lors de la réservation de la clé");
         exit(0);

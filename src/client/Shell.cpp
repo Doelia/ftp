@@ -13,12 +13,14 @@ void Shell::init() {
 
 Shell::Shell() {
 
-	string fileKey = "/tmp/sem";
+	char fileKey[21];
+	sprintf(fileKey, "/tmp/sem%d", getpid());
+
 	if (!FileManager::getInstance()->fileExists(fileKey)) {
 		FileManager::getInstance()->createFile(fileKey);
 	}
 
-	key_t key = ftok(fileKey.c_str(), 10);
+	key_t key = ftok(fileKey, 10);
 	if (key == -1) {
 		perror("Problème lors de la réservation de la clé");
 		stop();

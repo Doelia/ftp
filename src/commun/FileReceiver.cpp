@@ -90,3 +90,10 @@ int FileReceiver::getKeyFromNameFile(string nameFile) {
 }
 
 
+bool FileReceiver::isInTransfert(string nameFile) {
+	int idFile = this->getKeyFromNameFile(nameFile);
+	if (idFile < 0) {
+		return false;
+	}
+	return (this->transfered->at(idFile) < this->sizeFiles->at(idFile));
+}

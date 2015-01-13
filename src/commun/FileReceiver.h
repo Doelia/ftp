@@ -14,6 +14,7 @@ public:
 	FileReceiver(ProgressNotifier*);
 
 	int prepareTransfert(string, int);
+	bool isInTransfert(string);
 	int recvData(Packet* p);
 	
 private:
@@ -21,8 +22,8 @@ private:
 
 	vector<string>* listFiles; // Liste des noms de fichiers, le I correspond au I dans les autres teableaux
 	vector<int>* descs; // Descripteurs des fichiers en cours de transferts
-	vector<double>* sizeFiles;
-	vector<double>* transfered;
+	vector<double>* sizeFiles; // Taille des fichiers
+	vector<double>* transfered; // Nombre d'octets transférés
 	ProgressNotifier* pn;
 
 	int getKeyFromNameFile(string);
