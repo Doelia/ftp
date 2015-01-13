@@ -66,7 +66,6 @@ void FileSender::startSendFile(string nameFile, Connexion* connexion) {
 void FileSender::startSendFile_threaded(string nameFile, Connexion* connexion) {
 
 	int totalSize = FileManager::getInstance()->getSize(nameFile);
-	cout << "size=" << totalSize << endl;
 	if (this->pn != NULL) {
 		this->pn->onFileStart(nameFile, totalSize, 1);
 	}
@@ -84,7 +83,8 @@ void FileSender::startSendFile_threaded(string nameFile, Connexion* connexion) {
 	initBuffer(&buffer, size_read_eachTime);
 
 	int nbrRead = 0;
-	int totalSended = 0;
+	double totalSended = 0;
+	double total = (double) totalSize;
 	bool stop = false;
 	int lastPourcent = -1;
 	while (!stop && (nbrRead = read(descriptFichier, buffer, size_read_eachTime))) {
@@ -94,7 +94,7 @@ void FileSender::startSendFile_threaded(string nameFile, Connexion* connexion) {
 		} else {
 			if (this->pn != NULL) {
 				totalSended += nbrRead;
-				int pourcent = totalSended / totalSize * 100;
+				int pourcent = totalSended / total * 100;
 				if (lastPourcent != pourcent) {
 					this->pn->onFileProgress(nameFile, pourcent, 1);
 					lastPourcent = pourcent;

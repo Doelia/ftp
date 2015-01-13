@@ -37,7 +37,6 @@ View::View() {
 }
 
 void View::refreshView() {
-	cout << "refresh view" << endl;
 	ofstream fichier("/tmp/logs.txt", ios::out | ios::trunc);
 	fichier << out.rdbuf();
 	out.str("");
@@ -50,9 +49,8 @@ void View::refreshView() {
 }
 
 void* start_view(void *c) {
-	//system("xterm ./viewer");
-	//system("osascript -e 'tell application \"Terminal\" to do script \"./viewer\"'");
-	//exit(0);
+	system("xterm ./viewer");
+	exit(0);
 	return NULL;
 }
 
