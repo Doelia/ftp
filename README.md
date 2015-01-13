@@ -23,8 +23,3 @@ Interface graphique en console.
 	- put <nom du fichier>
 	- get <nom du fichier>
 
-## TODO
-- Gérer le PUT
-- Rétablir la view
-- Vérifier la fermerture propre
-- Passer l'IP par parametre au client

@@ -10,7 +10,7 @@ void stop() {
 int main(int args, char* argcs[]) {
 
     if (args < 2) {
-        cout << "Veuillez spécifier l'adresse du serveur. Exemple : ./serv localhost" << endl;
+        cout << "Veuillez spécifier l'adresse du serveur. Exemple : ./cli 127.0.0.1" << endl;
         return 0;
     }
 
